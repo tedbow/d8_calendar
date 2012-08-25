@@ -10,7 +10,7 @@
  */
 function template_preprocess_calendar_style(&$vars) {
   global $base_url;
-  global $language;
+  global $language_interface;
 
 }
 
