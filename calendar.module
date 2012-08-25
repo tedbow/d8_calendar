@@ -1,7 +1,8 @@
 <?php
-define('CALENDAR_SHOW_ALL', 0);
-define('CALENDAR_HIDE_ALL', -1);
-define('CALENDAR_EMPTY_STRIPE', '#ffffff');
+
+const CALENDAR_SHOW_ALL = 0;
+const CALENDAR_HIDE_ALL = -1;
+const CALENDAR_EMPTY_STRIPE = '#ffffff';
 
 /**
  * @file
