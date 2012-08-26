@@ -178,7 +178,7 @@ class calendar_plugin_row extends views_plugin_row_fields {
         $vocab = taxonomy_get_tree($vid);
         foreach ($vocab as $key => $term) {
           $form['colors']['calendar_colors_taxonomy'][$term->tid] = array(
-            '#title' => check_plain(t($term->name)),
+            '#title' => check_plain(t($term->label())),
             '#default_value' => isset($term_colors[$term->tid]) ? $term_colors[$term->tid] : CALENDAR_EMPTY_STRIPE,
             '#access' => !empty($vocab_field_options),
             '#dependency_count' => 2, // All 2 of the following #dependencies must be met.

@@ -671,7 +671,7 @@ function theme_calendar_stripe_legend($vars) {
       foreach ($vocabularies as $field_name => $vid) {
         $vocab = taxonomy_get_tree($vid);
         foreach ($vocab as $key => $term) {
-          $options[$term->tid] = $term->name;
+          $options[$term->tid] = $term->label();
         }
       }
       break;
