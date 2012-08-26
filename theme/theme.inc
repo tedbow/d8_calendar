@@ -692,7 +692,7 @@ function theme_calendar_stripe_legend($vars) {
           $gids = og_get_all_group($entity_type);
           $entities = entity_load($entity_type, $gids);
           foreach ($entities as $entity) {
-            list($gid) = entity_extract_ids($entity_type, $entity);
+            $gid = $entity->id();
             $options[$gid] = check_plain(t(entity_label($entity_type, $entity)));
           }
         }
