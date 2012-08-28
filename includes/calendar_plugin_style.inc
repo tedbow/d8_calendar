@@ -210,7 +210,7 @@ class calendar_plugin_style extends views_plugin_style {
     elseif (!empty($argument)) {
       module_load_include('inc', 'date_api', 'date_api_sql');
 
-      $date_handler = new date_sql_handler();
+      $date_handler = new DateSqlHandler();
       $this->view_granularity = $date_handler->arg_granularity($argument);
     }
     else {
