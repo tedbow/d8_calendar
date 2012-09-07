@@ -87,7 +87,7 @@ function calendar_preprocess_date_views_pager(&$vars) {
   if (!empty($view->date_info->calendar_date_link) && !empty($view->date_info->url)
   && (user_access("administer nodes") || user_access('create ' . $view->date_info->calendar_date_link . ' content'))) {
     $name = node_type_get_name($view->date_info->calendar_date_link);
-    $href = 'node/add/' . str_replace('_', '-', $view->date_info->calendar_date_link);
+    $href = 'node/add/' . $view->date_info->calendar_date_link;
     $calendar_links[$current_path]['actions'][] = array('title' => t('Add @name', array('@name' => $name)), 'path' => $href);
   }
 
