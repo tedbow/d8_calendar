@@ -4,6 +4,8 @@
  * @file
  * Theme functions for the Calendar module.
  */
+use Drupal\date_api\DateObject;
+use Drupal\date_api\DateGranularity;
 
 /**
  * Preprocess an RSS feed
@@ -107,8 +109,8 @@ function template_preprocess_calendar_year(&$vars) {
     $view->date_info->mini = TRUE;
     $view->date_info->hide_nav = TRUE;
     $view->date_info->show_title = TRUE;
-    $view->date_info->url = date_pager_url($view, NULL, date_pad($year, 4) . '-' . date_pad($month));
-    $view->date_info->min_date = new DateObject($view->date_info->year . '-' . date_pad($month) . '-01 00:00:00', date_default_timezone());
+    $view->date_info->url = date_pager_url($view, NULL, DateObject::datePad($year, 4) . '-' . DateObject::datePad($month));
+    $view->date_info->min_date = new DateObject($view->date_info->year . '-' . DateObject::datePad($month) . '-01 00:00:00', date_default_timezone());
     $view->date_info->max_date = clone($view->date_info->min_date);
     date_modify($view->date_info->max_date, '+1 month');
     date_modify($view->date_info->max_date, '-1 second');
@@ -589,7 +591,7 @@ function template_preprocess_calendar_month_multiple_entity(&$vars) {
   // create the link to the day
   $month_path = calendar_granularity_path($view, 'month');
   $day_path = calendar_granularity_path($view, 'day');
-  $vars['link'] = str_replace($month_path, $day_path, date_pager_url($view, NULL, date_pad($year, 4) . '-' . date_pad($month) . '-' . date_pad($day)));
+  $vars['link'] = str_replace($month_path, $day_path, date_pager_url($view, NULL, DateObject::datePad($year, 4) . '-' . DateObject::datePad($month) . '-' . DateObject::datePad($day)));
 }
 
 /**
@@ -619,7 +621,7 @@ function theme_calendar_time_row_heading($vars) {
     else {
       $limit = array('hour', 'minute');
     }
-    $format_hour = str_replace(array('a', 'A'), '', date_limit_format($format, $limit));
+    $format_hour = str_replace(array('a', 'A'), '', DateGranularity::limitFormat($format, $limit));
     $format_ampm = strstr($format, 'a') ? 'a' : (strstr($format, 'A') ? 'A' : '');
   }
   if ($start_time == '00:00:00' && $next_start_time == '23:59:59') {

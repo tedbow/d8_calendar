@@ -717,10 +717,10 @@ class calendar_plugin_style extends views_plugin_style {
 
                   // If the last day of this event exceeds the end of the current month or week,
                   // truncate the remaining days
-                  $diff =  $this->curday->difference($this->date_info->max_date, 'days');
+                  $diff =  $this->curday->diff($this->date_info->max_date, 'days');
                   $remaining_days = ($this->date_info->granularity == 'month') ? min(6 - $wday, $diff) : $diff - 1;
                   // The bucket_cnt defines the colspan.  colspan = bucket_cnt + 1
-                  $days = $this->curday->difference($item->date_end, 'days');
+                  $days = $this->curday->diff($item->date_end, 'days');
                   $bucket_cnt = max(0, min($days, $remaining_days));
 
                   // See if there is an available slot to add an event.  This will allow

@@ -4,6 +4,8 @@ const CALENDAR_SHOW_ALL = 0;
 const CALENDAR_HIDE_ALL = -1;
 const CALENDAR_EMPTY_STRIPE = '#ffffff';
 
+use Drupal\date_api\DateObject;
+
 /**
  * @file
  * Adds calendar filtering and displays to Views.
@@ -398,13 +400,13 @@ function calendar_groupby_times($type = '') {
   switch ($type) {
     case 'hour':
       for ($i = 0; $i <= 23; $i++) {
-        $times[] = date_pad($i) . ':00:00';
+        $times[] = DateObject::datePad($i) . ':00:00';
       }
       break;
     case 'half':
       for ($i = 0; $i <= 23; $i++) {
-        $times[] = date_pad($i) . ':00:00';
-        $times[] = date_pad($i) . ':30:00';
+        $times[] = DateObject::datePad($i) . ':00:00';
+        $times[] = DateObject::datePad($i) . ':30:00';
       }
       break;
     default:

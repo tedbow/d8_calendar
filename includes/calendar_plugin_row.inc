@@ -14,6 +14,8 @@
  *
  */
 
+use Drupal\date_api\DateGranularity;
+
 /**
  * Plugin which creates a view on the resulting object
  * and formats it as a Calendar node.
@@ -435,7 +437,7 @@ class calendar_plugin_row extends views_plugin_row_fields {
 
         $cck_field = field_info_field($field_name);
         $instance = field_info_instance($this->entity_type, $field_name, $this->type);
-        $granularity = date_granularity_precision($cck_field['settings']['granularity']);
+        $granularity = DateGranularity::precision($cck_field['settings']['granularity']);
         $increment = $instance['widget']['settings']['increment'];
 
       }
