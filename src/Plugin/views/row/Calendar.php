@@ -107,7 +107,6 @@ class Calendar extends RowPluginBase {
   protected function defineOptions() {
     $options = parent::defineOptions();
     $options['date_fields'] = ['default' => []];
-    $options['calendar_date_link'] = ['default' => ''];
     $options['colors'] = [
       'contains' => [
         'legend' => ['default' => ''],
@@ -129,16 +128,6 @@ class Calendar extends RowPluginBase {
 
     $form['markup'] = [
       '#markup' => $this->t("The calendar row plugin will format view results as calendar items. Make sure this display has a 'Calendar' format and uses a 'Date' contextual filter, or this plugin will not work correctly."),
-    ];
-
-    $form['calendar_date_link'] = [
-      '#title' => t('Add new date link'),
-      '#type' => 'select',
-      '#default_value' => $this->options['calendar_date_link'],
-      '#options' => [
-        '' => $this->t('No link'),
-      ] + node_type_get_names(),
-      '#description' => $this->t('Display a link to add a new date of the specified content type. Displayed only to users with appropriate permissions.'),
     ];
 
     $form['colors'] = [
@@ -278,29 +267,6 @@ class Calendar extends RowPluginBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
-    parent::submitOptionsForm($form, $form_state);
-
-    if ($this->view->getBaseTables()['node_field_data']) {
-      // @todo figure out what the real default display is.
-      $link_display = $this->view->getDisplay()->getOption('link_display');
-      if (!empty($link_display)) {
-        $view_id = $this->view->storage->id();
-        $route = "view.$view_id.$link_display";
-
-        // @todo uncomment after calendar_clear_link_path is fixed.
-        //calendar_clear_link_path($path);
-        if (!empty($form_state->getValue('row_options')['calendar_date_link'])) {
-          $node_type = $form_state->getValue('row_options')['calendar_date_link'];
-          calendar_set_link('node', $node_type, $route);
-        }
-      }
-    }
-  }
-
-  /**
    *  Check to make sure the user has entered a valid 6 digit hex color.
    */
   public function validateHexColor($element, FormStateInterface $form_state) {
@@ -348,12 +314,6 @@ class Calendar extends RowPluginBase {
     if (!empty($ids)) {
       $this->entities = \Drupal::entityManager()->getStorage($this->entityType)->loadMultiple($ids);
     }
-
-    // Let the style know if a link to create a new date is required.
-    // @todo implement
-    // see calendar_preprocess_date_views_pager() on some more info on how this
-    // is used.
-//    $this->view->dateInfo->setCalendarDateLink($this->options['calendar_date_link']);
 
     // Identify the date argument and fields that apply to this view. Preload
     // the Date Views field info for each field, keyed by the field name, so we
