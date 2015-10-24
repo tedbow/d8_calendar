@@ -1,5 +1,5 @@
 /**
- * calendar calendar table styles
+ * Calendar calendar table styles.
  */
 .calendar-calendar tr.odd, .calendar-calendar tr.even {
   background-color: #fff;
@@ -21,7 +21,7 @@
 }
 
 /**
- * IE needs a little help to get the side by side tables to the right size
+ * IE needs a little help to get the side by side tables to the right size.
  */
 .calendar-calendar .year-view td {
   width: 32%;
@@ -62,14 +62,14 @@
 }
 
 /**
- * simplify the mini calendar by removing borders
+ * Simplify the mini calendar by removing borders.
  */
 .calendar-calendar .mini {
   border: none;
  }
 
 /**
- * format for the week number in the first cell
+ * Format for the week number in the first cell.
  */
 .calendar-calendar td.week {
   width: 1%;
@@ -86,7 +86,8 @@
 }
 
 /**
- * IE6 does not support min-height, using Min-Height fast hack from http://www.dustindiaz.com/min-height-fast-hack
+ * IE6 does not support min-height, using Min-Height fast hack from
+ * http://www.dustindiaz.com/min-height-fast-hack .
  */
 .calendar-calendar .inner {
   min-height: 5em;
@@ -100,7 +101,8 @@
   margin: 0;
 }
 /**
- * Make sure paragraphs buried in calendar cells use padding, not margins, for separation so the background color doesn't come through.
+ * Make sure paragraphs buried in calendar cells use padding, not margins, for
+ * separation so the background color doesn't come through.
  */
 .calendar-calendar .inner p {
   padding: 0 0 .8em 0;
@@ -119,7 +121,7 @@
 }
 
 /**
- * format days of the week header cells
+ * Format days of the week header cells.
  */
 .calendar-calendar th.days {
   color: #ccc;
@@ -130,7 +132,7 @@
  }
 
 /**
- * floating day number div
+ * Floating day number div.
  */
 .calendar-calendar div.day {
   float: right;
@@ -145,7 +147,7 @@
 }
 
 /**
- * individual node container
+ * Individual node container.
  */
 .calendar-calendar div.calendar {
   background-color: #fff;
@@ -157,7 +159,7 @@
   clear: both;
 }
 /**
- * No floating of day view content because there is no floating day number
+ * No floating of day view content because there is no floating day number.
  */
 .calendar-calendar .day-view div.calendar {
   float: none;
@@ -219,7 +221,7 @@ table .mini-day-on a {
 }
 
 /**
- * formatting for the legend stripe and block
+ * Formatting for the legend stripe and block.
  */
 .calendar-calendar .stripe {
   height:  5px;
@@ -252,7 +254,7 @@ table.calendar-legend tr.even .stripe {
 }
 
 /**
- * formatting for the full day view
+ * Formatting for the full day view.
  */
 .calendar-calendar td.calendar-agenda-hour {
   font-family: serif;
@@ -351,8 +353,7 @@ table.calendar-legend tr.even .stripe {
 }
 
 /**
- *Set small font size for all items in calendar div, themes can override this.
- *
+ * Set small font size for all items in calendar div, themes can override this.
  * Use x-small instead of em to avoid multiplying effect in nested items.
  */
 .calendar-calendar div.calendar {
