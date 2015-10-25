@@ -5,6 +5,8 @@
  */
 namespace Drupal\calendar;
 
+use Datetime;
+use DateTimeZone;
 use Drupal\Core\Datetime\DateHelper;
 use Drupal\views\Views;
 use Drupal\Component\Utility\Unicode;
@@ -87,9 +89,9 @@ class CalendarHelper extends DateHelper {
   /**
    * Computes difference between two days using a given measure.
    *
-   * @param \DateTime $start_date
+   * @param DateTime $start_date
    *   The start date.
-   * @param \DateTime $stop_date
+   * @param DateTime $stop_date
    *   The stop date.
    * @param string $measure
    *   (optional) A granularity date part. Defaults to 'seconds'.
@@ -100,7 +102,7 @@ class CalendarHelper extends DateHelper {
    * @return int
    *   The difference between the 2 dates in the given measure.
    */
-  public static function difference(\DateTime $start_date, \DateTime $stop_date, $measure = 'seconds', $absolute = TRUE) {
+  public static function difference(DateTime $start_date, DateTime $stop_date, $measure = 'seconds', $absolute = TRUE) {
     // Create cloned objects or original dates will be impacted by the
     // date_modify() operations done in this code.
     $date1 = clone($start_date);
@@ -213,10 +215,10 @@ class CalendarHelper extends DateHelper {
    */
   public static function isoWeeksInYear($date = NULL) {
     if (empty($date)) {
-      $date = new \DateTime();
+      $date = new DateTime();
     }
     elseif (!is_object($date)) {
-      $date = new \DateTime($date);
+      $date = new DateTime($date);
     }
 
     if (is_object($date)) {
@@ -307,5 +309,58 @@ class CalendarHelper extends DateHelper {
    */
   public static function displayTypes() {
     return ['year' => t('Year'), 'month' => t('Month'), 'day' => t('Day'), 'week' => t('Week')];
+  }
+
+  /**
+   * The calendar week number for a date.
+   *
+   * PHP week functions return the ISO week, not the calendar week.
+   *
+   * @param string $date
+   *   A date string in the format Y-m-d.
+   *
+   * @return int
+   *   The calendar week number.
+   */
+  public static function dateWeek($date) {
+    $date = substr($date, 0, 10);
+    $parts = explode('-', $date);
+
+    $timezone = new DateTimeZone('UTC');
+    $date = new DateTime($date . ' 12:00:00', $timezone);
+
+    $year_date = new DateTime($parts[0] . '-01-01 12:00:00', $timezone);
+    $week = intval($date->format('W'));
+    $year_week = intval(date_format($year_date, 'W'));
+    $date_year = intval($date->format('o'));
+
+    // Remove the leap week if it's present.
+    if ($date_year > intval($parts[0])) {
+      $last_date = clone($date);
+      date_modify($last_date, '-7 days');
+      $week = date_format($last_date, 'W') + 1;
+    }
+    elseif ($date_year < intval($parts[0])) {
+      $week = 0;
+    }
+
+    if ($year_week != 1) {
+      $week++;
+    }
+
+    // Convert to ISO-8601 day number, to match weeks calculated above.
+    $iso_first_day = 0;
+
+    // If it's before the starting day, it's the previous week.
+    if (intval($date->format('N')) < $iso_first_day) {
+      $week--;
+    }
+
+    // If the year starts before, it's an extra week at the beginning.
+    if (intval(date_format($year_date, 'N')) < $iso_first_day) {
+      $week++;
+    }
+
+    return $week;
   }
 }

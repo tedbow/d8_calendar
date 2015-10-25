@@ -420,7 +420,7 @@ class Calendar extends StylePluginBase {
     $this->dateInfo->setMinMonth($this->dateFormatter->format($argument->min_date->getTimestamp(), 'custom', 'n'));
     $this->dateInfo->setMinDay($this->dateFormatter->format($argument->min_date->getTimestamp(), 'custom', 'j'));
     // @todo We shouldn't use DATETIME_DATE_STORAGE_FORMAT.
-    $this->dateInfo->setMinWeek(date_week(date_format($argument->min_date, DATETIME_DATE_STORAGE_FORMAT)));
+    $this->dateInfo->setMinWeek(CalendarHelper::dateWeek(date_format($argument->min_date, DATETIME_DATE_STORAGE_FORMAT)));
     $this->dateInfo->setRange($argument->options['calendar']['date_range']);
     $this->dateInfo->setMinDate($argument->min_date);
     $this->dateInfo->setMaxDate($argument->max_date);
@@ -555,7 +555,7 @@ class Calendar extends StylePluginBase {
     do {
       $init_day = clone($this->currentDay);
       $month = $this->currentDay->format('n');
-      $week = date_week($current_day_date);
+      $week = CalendarHelper::dateWeek($current_day_date);
       $first_day = \Drupal::config('system.date')->get('first_day');
       list($multiday_buckets, $singleday_buckets, $total_rows) = array_values($this->calendarBuildWeek(TRUE));
 
@@ -879,7 +879,7 @@ class Calendar extends StylePluginBase {
     $weekdays = CalendarHelper::untranslatedDays();
     $today = $this->dateFormatter->format(REQUEST_TIME, 'custom', DATETIME_DATE_STORAGE_FORMAT);
     $month = $this->currentDay->format('n');
-    $week = date_week($current_day_date);
+    $week = CalendarHelper::dateWeek($current_day_date);
 
     $first_day = \Drupal::config('system.date')->get('first_day');
     // Move backwards to the first day of the week.
