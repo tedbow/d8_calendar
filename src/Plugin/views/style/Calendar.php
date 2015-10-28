@@ -80,6 +80,28 @@ class Calendar extends StylePluginBase {
    */
   protected $styleInfo;
 
+  /**
+   * The calendar items contains the keys for the start date and the start time
+   * of the event.
+   *
+   * Example:
+   * @code
+   * $items = array(
+   *   "2015-10-20" => array(
+   *     "00:00:00" => array(
+   *        0 => Drupal\calendar\CalendarEvent,
+   *      ),
+   *   ),
+   *   "2015-10-21" => array(
+   *     "00:00:00" => array(
+   *        0 => Drupal\calendar\CalendarEvent,
+   *      ),
+   *   ),
+   * );
+   * @endcode
+   *
+   * @var array
+   */
   protected $items;
 
   /**
