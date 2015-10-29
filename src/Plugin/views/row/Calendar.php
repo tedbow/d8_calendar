@@ -323,12 +323,16 @@ class Calendar extends RowPluginBase {
 //    $data = date_views_fields($this->view->base_table);
 //    $data = $data['name'];
 
-    $data['name'] = 'node_field_data.created_year';
+    $data = CalendarHelper::dateViewFields();
+
+//    $data['name'] = 'node_field_data.created_year';
     $date_fields = [];
     /** @var $handler \Drupal\views\Plugin\views\argument\Formula */
     foreach ($this->view->getDisplay()->getHandlers('argument') as $handler) {
       if ($handler instanceof CalendarDate) {
-        $date_fields[$handler->table] = $table_data[$handler->field];
+        // Strip "_calendar" from the field name.
+        $fieldName = str_replace('_calendar', '', $handler->field);
+        $date_fields[$fieldName] = $data['alias'][$handler->table . '_' . $fieldName];
 
         $this->dateArgument = $handler;
         $this->dateFields = $date_fields;

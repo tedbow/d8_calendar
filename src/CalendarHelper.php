@@ -8,6 +8,10 @@ namespace Drupal\calendar;
 use Datetime;
 use DateTimeZone;
 use Drupal\Core\Datetime\DateHelper;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\views\Plugin\views\filter\Broken;
 use Drupal\views\Views;
 use Drupal\Component\Utility\Unicode;
 
@@ -362,5 +366,311 @@ class CalendarHelper extends DateHelper {
     }
 
     return $week;
+  }
+
+  /**
+   * Helper for identifying Date API fields for views.
+   *
+   * This is a ported version of  date_views_fields() in date_views module in
+   * D7.
+   *
+   * @param string $base
+   * @return array
+   */
+  public static function dateViewFields($base = 'node') {
+
+    // Make sure $base is never empty.
+    if (empty($base)) {
+      $base = 'node';
+    }
+
+    $cid = 'date_views_fields_' . $base;
+//    cache_clear_all($cid, 'cache_views');
+
+    // We use fields that provide filter handlers as our universe of possible
+    // fields of interest.
+    $all_fields = self::viewsFetchFields($base, 'filter');
+
+    // Iterate over all the fields that Views knows about.
+    $fields = array();
+    foreach ((array) $all_fields as $alias => $val) {
+      // Set up some default values.
+      $granularity = array('year', 'month', 'day', 'hour', 'minute', 'second');
+      $tz_handling = 'site';
+      $related_fields = array();
+      $timezone_field = '';
+      $offset_field = '';
+      $rrule_field = '';
+      $delta_field = '';
+//      $sql_type = DATE_UNIX;
+      $sql_type = DATETIME_DATETIME_STORAGE_FORMAT;
+      $type = '';
+
+      $name = $alias;
+      $tmp = explode('.', $name);
+      $field_name = $tmp[1];
+      $table_name = $tmp[0];
+
+      // Unset the date filter to avoid ugly recursion and broken values.
+      if ($field_name == 'date_filter') {
+        continue;
+      }
+
+      $fromto = array($name, $name);
+
+
+      // If we don't have a filter handler, we don't need to do anything more.
+      $filterHandler = Views::handlerManager('filter');
+      $handler = $filterHandler->getHandler(['table' => $table_name, 'field' => $field_name,]);
+      if ($handler instanceof Broken) {
+        continue;
+      }
+
+//      $handler = views_get_handler($table_name, $field_name, 'filter');
+      $pluginDefinition = $handler->getPluginDefinition();
+
+      // We don't care about anything but date handlers.
+      if ($pluginDefinition['class'] != 'Drupal\views\Plugin\views\filter\Date'
+        && !is_subclass_of($pluginDefinition['class'], 'Drupal\views\Plugin\views\filter\Date')) {
+        continue;
+      }
+      $is_field = FALSE;
+
+      // For Field module fields, get the date type.
+      $custom = array();
+      if ($field_name || isset($handler->definition['field_name'])) {
+//        $field = FieldConfig::loadByName($field_name);
+//        $field = field_info_field($handler->definition['field_name']);
+        $is_field = TRUE;
+//        switch ($field['type']) {
+        switch ($handler->getBaseId()) {
+          case 'date':
+            $sql_type = DATETIME_DATETIME_STORAGE_FORMAT;
+//            $sql_type = DATE_ISO;
+            break;
+
+          case 'datestamp':
+            break;
+
+          case 'datetime':
+//            $sql_type = DATE_DATETIME;
+            $sql_type = DATETIME_DATETIME_STORAGE_FORMAT;
+            break;
+
+          default:
+            // If this is not a date field, nothing more to do.
+            continue;
+        }
+
+//        $revision = in_array($base, array('node_revision')) ? FIELD_LOAD_REVISION : FIELD_LOAD_CURRENT;
+        // @todo find database info
+//        $db_info = date_api_database_info($field, $revision);
+        $name = $table_name . "." . $field_name;
+        $grans = array('year', 'month', 'day', 'hour', 'minute', 'second');
+        $granularity = !empty($field['granularity']) ? $field['granularity'] : $grans;
+
+//        $fromto = array(
+//          $table_name . '.' . $db_info['columns'][$table_name]['value'],
+//          $table_name . '.' . (!empty($field['settings']['todate']) ? $db_info['columns'][$table_name]['value2'] : $db_info['columns'][$table_name]['value']),
+//        );
+
+//        if (isset($field['settings']['tz_handling'])) {
+//          $tz_handling = $field['settings']['tz_handling'];
+//          $db_info = date_api_database_info($field, $revision);
+//          if ($tz_handling == 'date') {
+//            $offset_field = $table_name . '.' . $db_info['columns'][$table_name]['offset'];
+//          }
+//          $related_fields = array(
+//            $table_name . '.' . $db_info['columns'][$table_name]['value'],
+//          );
+//          if (isset($db_info['columns'][$table_name]['value2'])) {
+//            $related_fields = array_merge($related_fields, array($table_name . '.' . $db_info['columns'][$table_name]['value2']));
+//          }
+//          if (isset($db_info['columns'][$table_name]['timezone'])) {
+//            $related_fields = array_merge($related_fields, array($table_name . '.' . $db_info['columns'][$table_name]['timezone']));
+//            $timezone_field = $table_name . '.' . $db_info['columns'][$table_name]['timezone'];
+//          }
+//          if (isset($db_info['columns'][$table_name]['rrule'])) {
+//            $related_fields = array_merge($related_fields, array($table_name . '.' . $db_info['columns'][$table_name]['rrule']));
+//            $rrule_field = $table_name . '.' . $db_info['columns'][$table_name]['rrule'];
+//          }
+//        }
+        // Get the delta value into the query.
+//        if ($field['cardinality'] != 1) {
+//          array_push($related_fields, "$table_name.delta");
+//          $delta_field = $table_name . '_delta';
+//        }
+      }
+
+      // Allow custom modules to provide date fields.
+      else {
+//        foreach (module_implements('date_views_fields') as $module) {
+//          $function = $module . '_date_views_fields';
+//          if ($custom = $function("$table_name.$field_name")) {
+//            $type = 'custom';
+//            break;
+//          }
+//        }
+      }
+      // Don't do anything if this is not a date field we can handle.
+      if (!empty($type) || empty($custom)) {
+        $alias = str_replace('.', '_', $alias);
+        $fields['name'][$name] = array(
+          'is_field' => $is_field,
+          'sql_type' => $sql_type,
+//          'label' => $val['group'] . ': ' . $val['title'],
+          'granularity' => $granularity,
+          'fullname' => $name,
+          'table_name' => $table_name,
+          'field_name' => $field_name,
+          'query_name' => $alias,
+          'fromto' => $fromto,
+          'tz_handling' => $tz_handling,
+          'offset_field' => $offset_field,
+          'timezone_field' => $timezone_field,
+          'rrule_field' => $rrule_field,
+          'related_fields' => $related_fields,
+          'delta_field' => $delta_field,
+        );
+
+        // Allow the custom fields to over-write values.
+        if (!empty($custom)) {
+          foreach ($custom as $key => $val) {
+            $fields['name'][$name][$key] = $val;
+          }
+        }
+        $fields['name'][$name]['real_field_name'] = $field_name;
+        $fields['alias'][$alias] = $fields['name'][$name];
+      }
+    }
+//    cache_set($cid, $fields, 'cache_views');
+    return $fields;
+  }
+
+  /**
+   * Fetch a list of all fields available for a given base type.
+   *
+   * This is a ported version of  views_fetch_fields() in date_views module in
+   * D7.
+   *
+   * @param $base
+   * @param $type
+   * @param bool|FALSE $grouping
+   * @return array
+   */
+  private static function viewsFetchFields($base, $type, $grouping = FALSE) {
+    static $fields = array();
+    if (empty($fields)) {
+      $data = Views::viewsData()->get();
+      $start = microtime(TRUE);
+      // This constructs this ginormous multi dimensional array to
+      // collect the important data about fields. In the end,
+      // the structure looks a bit like this (using nid as an example)
+      // $strings['nid']['filter']['title'] = 'string'.
+      //
+      // This is constructed this way because the above referenced strings
+      // can appear in different places in the actual data structure so that
+      // the data doesn't have to be repeated a lot. This essentially lets
+      // each field have a cheap kind of inheritance.
+
+      foreach ($data as $table => $table_data) {
+        $bases = array();
+        $strings = array();
+        $skip_bases = array();
+        foreach ($table_data as $field => $info) {
+          // Collect table data from this table
+          if ($field == 'table') {
+            // calculate what tables this table can join to.
+            if (!empty($info['join'])) {
+              $bases = array_keys($info['join']);
+            }
+            // And it obviously joins to itself.
+            $bases[] = $table;
+            continue;
+          }
+          foreach (array('field', 'sort', 'filter', 'argument', 'relationship', 'area') as $key) {
+            if (!empty($info[$key])) {
+              if ($grouping && !empty($info[$key]['no group by'])) {
+                continue;
+              }
+              if (!empty($info[$key]['skip base'])) {
+                foreach ((array) $info[$key]['skip base'] as $base_name) {
+                  $skip_bases[$field][$key][$base_name] = TRUE;
+                }
+              }
+              elseif (!empty($info['skip base'])) {
+                foreach ((array) $info['skip base'] as $base_name) {
+                  $skip_bases[$field][$key][$base_name] = TRUE;
+                }
+              }
+              // Don't show old fields. The real field will be added right.
+              if (isset($info[$key]['moved to'])) {
+                continue;
+              }
+              foreach (array('title', 'group', 'help', 'base', 'aliases') as $string) {
+                // First, try the lowest possible level
+                if (!empty($info[$key][$string])) {
+                  $strings[$field][$key][$string] = $info[$key][$string];
+                }
+                // Then try the field level
+                elseif (!empty($info[$string])) {
+                  $strings[$field][$key][$string] = $info[$string];
+                }
+                // Finally, try the table level
+                elseif (!empty($table_data['table'][$string])) {
+                  $strings[$field][$key][$string] = $table_data['table'][$string];
+                }
+                else {
+                  if ($string != 'base' && $string != 'base') {
+                    $strings[$field][$key][$string] = t("Error: missing @component", array('@component' => $string));
+                  }
+                }
+              }
+            }
+          }
+        }
+        foreach ($bases as $base_name) {
+          foreach ($strings as $field => $field_strings) {
+            foreach ($field_strings as $type_name => $type_strings) {
+              if (empty($skip_bases[$field][$type_name][$base_name])) {
+                $fields[$base_name][$type_name]["$table.$field"] = $type_strings;
+              }
+            }
+          }
+        }
+      }
+//    vsm('Views UI data build time: ' . (views_microtime() - $start) * 1000 . ' ms');
+    }
+
+    // If we have an array of base tables available, go through them
+    // all and add them together. Duplicate keys will be lost and that's
+    // Just Fine.
+    if (is_array($base)) {
+      $strings = array();
+      foreach ($base as $base_table) {
+        if (isset($fields[$base_table][$type])) {
+          $strings += $fields[$base_table][$type];
+        }
+      }
+      uasort($strings, '_views_sort_types');
+      return $strings;
+    }
+
+    // @todo find out if this hack is right
+//    if (isset($fields[$base][$type])) {
+//      uasort($fields[$base][$type], '_views_sort_types');
+//      return $fields[$base][$type];
+//    }
+    $all_fields = [];
+    foreach ($fields as $key => $field) {
+      if ($base == substr($key, 0, 4)) {
+        if (isset($fields[$key][$type])) {
+//          uasort($fields[$key][$type], '_views_sort_types');
+          $all_fields = array_merge($all_fields, $fields[$key][$type]);
+        }
+      }
+    }
+    return $all_fields;
+//    return array();
   }
 }
