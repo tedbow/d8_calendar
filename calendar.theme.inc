@@ -108,13 +108,13 @@ function template_preprocess_calendar_year(&$vars) {
     // TODO implement
 //    $view->dateInfo->url = date_pager_url($view, NULL, \Drupal\Component\Datetime\DateTimePlus::datePad($year, 4) . '-' . \Drupal\Component\Datetime\DateTimePlus::datePad($month));
     // TODO handle timezone
-    $view->dateInfo->setMinDate(new DateTime($view->dateInfo->year . '-' . DateTimePlus::datePad($month) . '-01 00:00:00', new DateTimeZone('europe/brussels')));
+    $view->dateInfo->setMinDate(new DateTime($view->dateInfo->getMinYear() . '-' . DateTimePlus::datePad($month) . '-01 00:00:00', new DateTimeZone('europe/brussels')));
     $maxDate = clone($view->dateInfo->getMinDate());
     $maxDate->modify('+1 month');
     $maxDate->modify('-1 second');
     $view->dateInfo->setMaxDate($maxDate);
     $months[$month] = [
-      '#theme' => 'calendar_month',
+      '#theme' => 'calendar_mini',
       '#view' => $view,
       '#options' => $vars['options'],
       '#rows' => $month_rows,

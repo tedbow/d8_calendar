@@ -141,7 +141,7 @@ function calendar_theme() {
       'file' => 'calendar.theme.inc',
     ],
     'calendar_year' => [
-      'variables' => ['view' => NULL, 'rows' => [], 'months' => [], 'mini' => FALSE,],
+      'variables' => ['view' => NULL, 'rows' => [], 'options' => [], 'months' => [], 'mini' => FALSE,],
       'file' => 'calendar.theme.inc',
     ],
     'calendar_time_row_heading' => [
