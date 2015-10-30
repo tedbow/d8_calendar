@@ -381,9 +381,6 @@ class Calendar extends RowPluginBase {
 //      $rrule_field = $info['rrule_field'];
 //      $is_field    = $info['is_field'];
 
-      // @todo needed?
-      $info = \Drupal::entityManager()->getDefinition($this->entityType);
-
       $event = new CalendarEvent();
       $event->setTitle($entity->label());
       $event->setEntityId($entity->id());
@@ -400,7 +397,7 @@ class Calendar extends RowPluginBase {
       $increment = 1;
 
       // @todo implement
-      if (FALSE && $is_field) {
+      if (FALSE && $info['is_field']) {
 
         // Set the date_id for the node, used to identify which field value to display for
         // fields that have multiple values. The theme expects it to be an array.
@@ -431,24 +428,19 @@ class Calendar extends RowPluginBase {
         $increment = $instance['widget']['settings']['increment'];
 
       }
-      // @todo implement
-      elseif (FALSE && !empty($entity->$field_name)) {
-        $item = $entity->$field_name;
-        $db_tz   = date_get_timezone_db($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
-        $to_zone = date_get_timezone($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
-        $item_start_date = new dateObject($item, $db_tz);
+      elseif ($entity->get($field_name)) {
+        $item = $entity->get($field_name)->getValue();
+        // @todo handle timezones
+//        $db_tz   = date_get_timezone_db($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
+//        $to_zone = date_get_timezone($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
+//        $item_start_date = new dateObject($item, $db_tz);
+        $item_start_date = new \DateTime();
+        $item_start_date->setTimestamp($item[0]['value']);
         $item_end_date   = $item_start_date;
         $entity->date_id = ['calendar.' . $id . '.' . $field_name . '.0'];
       }
 
       // If we don't have a date value, go no further.
-      // @todo remove this once the above loop is fixed
-      $item_start_date = new \DateTime();
-      $item_start_date->setTimestamp($entity->getCreatedTime());
-      $item_start_date->setTime(0, 0, 0);
-      $item_end_date = new \DateTime();
-      $item_end_date->setTimestamp($entity->getCreatedTime() + 3600);
-      $item_end_date->setTime(0, 0, 0);
       if (empty($item_start_date)) {
         continue;
       }

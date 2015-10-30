@@ -464,7 +464,7 @@ function template_preprocess_calendar_week(&$vars) {
     foreach ($rows['singleday_buckets'] as $wday => $singleday_row) {
       $columns[] = $wday;
       foreach ($singleday_row as &$row) {
-        $start_times = $view->styleInfo->getCustomGroupByTimes();
+        $start_times = $view->styleInfo->getGroupByTimes();
         $start_time = array_shift($start_times);
         $next_start_time = count($start_times) ? array_shift($start_times) : $end_start_time;
         foreach ($row as &$item) {
@@ -496,7 +496,7 @@ function template_preprocess_calendar_week(&$vars) {
             }
             $grouped_items[$start_time]['values'][$wday][] = &$item;
             if ($display_overlap) {
-              $date_end = date_format($item['item']->date_end, 'H:i:s');
+              $date_end = date_format($item['item']->getEndDate(), 'H:i:s');
               _calc_indents($overlapped_items[$wday], $time, $date_end, $item);
             }
             $item_count++;

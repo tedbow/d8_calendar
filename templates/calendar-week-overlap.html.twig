@@ -155,8 +155,9 @@
                 <div class="half-hour">&nbsp;</div>
                   <div class="calendar item-wrapper">
                     <div class="inner">
-                      {% if items[start_time]['values'][loop.index0] %}
-                        {% for item in items[start_time]['values'][loop.index0] %}
+                      {#{% if items[start_time]['values'] is not empty %}{{ dump(items[start_time]['values']) }}{% endif %}#}
+                      {% if items[start_time]['values'][loop.parent.loop.index0] %}
+                        {% for item in items[start_time]['values'][loop.parent.loop.index0] %}
                           {% if item['is_first'] %}
                             <div class="item {{ item.class }} first_item">
                           {% else %}
