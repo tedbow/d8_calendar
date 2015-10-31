@@ -125,9 +125,6 @@ function calendar_theme() {
       'variables' => ['view' => NULL, 'rendered_fields' => NULL, 'item' => NULL],
       'file' => 'calendar.theme.inc',
     ],
-    'calendar_stripe_stripe' => [
-      'variables' => ['node' => NULL],
-    ],
     'calendar_week' => [
       'variables' => ['view' => NULL, 'day_names' => [], 'rows' => [],],
       'file' => 'calendar.theme.inc',
