@@ -226,8 +226,9 @@ function template_preprocess_calendar_day(&$vars) {
 
   $grouped_items = [];
   foreach ($rows['items'] as &$items) {
+    /** @var \Drupal\calendar\CalendarEvent $item */
     foreach ($items as &$item) {
-      $time = date_format($item->calendar_start_date, 'H:i:s');
+      $time = date_format($item->getStartDate(), 'H:i:s');
       if (!empty($item->rendered_fields[$grouping_field])) {
         $column = $item->rendered_fields[$grouping_field];
         if (!in_array($column, $columns)) {
@@ -282,7 +283,7 @@ function template_preprocess_calendar_day(&$vars) {
     $variables = array(
       'start_time' => $start_time,
       'next_start_time' => $next_start_time,
-      'curday_date' => $rows['#date'],
+      'curday_date' => $rows['date'],
     );
 
     $heading = template_preprocess_calendar_time_row_heading($variables);

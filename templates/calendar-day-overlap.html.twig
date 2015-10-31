@@ -91,25 +91,30 @@
             {% else %}
               {% set class = '' %}
             {% endif %}
-            <div class="{{ class }} calendar-agenda-items single-day">
-              <div class="half-hour">&nbsp;</div>
-              {% if is_first and hour['values'][column] %}
-                <div class="calendar item-wrapper first_item">
-                {% set is_first = true %}
-              {% else %}
-                <div class="calendar item-wrapper">
-              {% endif %}
-                <div class="inner">
-                  {% if hour['values']|length and hour['values'] is iterable and hour['values'][column] is defined %}
-                    {% for item in hour['values'][column] %}
-                      {{ item.entry }}
-                    {% endfor %}
-                  {% else %}
-                    &nbsp;
-                  {% endif %}
+
+            {% for column in columns %}
+              <div class="{{ class }} calendar-agenda-items single-day">
+                <div class="half-hour">&nbsp;</div>
+                {% if is_first and hour['values'][column] %}
+                  <div class="calendar item-wrapper first_item">
+                  {% set is_first = true %}
+                {% else %}
+                  <div class="calendar item-wrapper">
+                {% endif %}
+                  <div class="inner">
+                    {#{{ dump(hour['values'][column]) }}#}
+                    {#{{ item }}#}
+                    {% if hour['values'] is not empty and hour['values'][column] is not empty %}
+                      {% for item in hour['values'][column] %}
+                        {{ item }}
+                      {% endfor %}
+                    {% else %}
+                      &nbsp;
+                    {% endif %}
+                  </div>
                 </div>
               </div>
-            </div>
+            {% endfor %}
           {% endfor %}
         </td>
       </tr>
