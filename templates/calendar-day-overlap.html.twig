@@ -102,8 +102,6 @@
                   <div class="calendar item-wrapper">
                 {% endif %}
                   <div class="inner">
-                    {#{{ dump(hour['values'][column]) }}#}
-                    {#{{ item }}#}
                     {% if hour['values'] is not empty and hour['values'][column] is not empty %}
                       {% for item in hour['values'][column] %}
                         {{ item }}
