@@ -393,7 +393,7 @@ class CalendarHelper extends DateHelper {
 
     // Iterate over all the fields that Views knows about.
     $fields = array();
-    foreach ((array) $all_fields as $alias => $val) {
+    foreach ((array) $all_fields as $alias => $value) {
       // Set up some default values.
       $granularity = array('year', 'month', 'day', 'hour', 'minute', 'second');
       $tz_handling = 'site';
@@ -535,8 +535,8 @@ class CalendarHelper extends DateHelper {
 
         // Allow the custom fields to over-write values.
         if (!empty($custom)) {
-          foreach ($custom as $key => $val) {
-            $fields['name'][$name][$key] = $val;
+          foreach ($custom as $key => $field_value) {
+            $fields['name'][$name][$key] = $field_value;
           }
         }
         $fields['name'][$name]['real_field_name'] = $field_name;
