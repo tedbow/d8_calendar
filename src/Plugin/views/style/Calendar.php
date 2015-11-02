@@ -494,10 +494,10 @@ class Calendar extends StylePluginBase {
     $items = [];
     foreach ($this->view->result as $row_index => $row) {
       $this->view->row_index = $row_index;
-      $event_info = $this->view->rowPlugin->render($row);
+      $events = $this->view->rowPlugin->render($row);
       // @todo Check what comes out here.
       /** @var \Drupal\calendar\CalendarEvent $event */
-      foreach ($event_info as $event_info) {
+      foreach ($events as $event_info) {
 //        $event->granularity = $this->dateInfo->granularity;
         $item_start = $this->dateFormatter->format($event_info->getStartDate()->getTimestamp(), 'custom', 'Y-m-d');
         $item_end = $this->dateFormatter->format($event_info->getEndDate()->getTimestamp(), 'custom', 'Y-m-d');
