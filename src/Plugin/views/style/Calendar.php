@@ -199,6 +199,11 @@ class Calendar extends StylePluginBase {
       ],
       '#description' => $this->t('Display the mini style calendar, with no item details. Suitable for a calendar displayed in a block.'),
       '#dependency' => ['edit-style-options-calendar-type' => ['month']],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => ['value' => 'month'],
+        ],
+      ],
     ];
     $form['name_size'] = [
       '#title' => $this->t('Calendar day of week names'),
@@ -211,8 +216,14 @@ class Calendar extends StylePluginBase {
         99 => $this->t('Full name'),
       ],
       '#description' => $this->t('The way day of week names should be displayed in a calendar.'),
-      '#dependency' => [
-        'edit-style-options-calendar-type' => ['month', 'week', 'year'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => [
+            ['value' => 'year'],
+            ['value' => 'month'],
+            ['value' => 'week'],
+          ],
+        ],
       ],
     ];
     $form['with_weekno'] = [
@@ -224,7 +235,11 @@ class Calendar extends StylePluginBase {
         1 => $this->t('Yes'),
       ],
       '#description' => $this->t('Whether or not to show week numbers in the left column of calendar weeks and months.'),
-      '#dependency' => ['edit-style-options-calendar-type' => ['month']],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => ['value' => 'month'],
+        ],
+      ],
     ];
     $form['max_items'] = [
       '#title' => $this->t('Maximum items'),
@@ -238,7 +253,11 @@ class Calendar extends StylePluginBase {
       ],
       '#default_value' => $this->options['calendar_type'] != 'day' ? $this->options['max_items'] : 0,
       '#description' => $this->t('Maximum number of items to show in calendar cells, used to keep the calendar from expanding to a huge size when there are lots of items in one day.'),
-      '#dependency' => ['edit-style-options-calendar-type' => ['month']],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => ['value' => 'month'],
+        ],
+      ],
     ];
     $form['max_items_behavior'] = [
       '#title' => $this->t('Too many items'),
@@ -249,7 +268,11 @@ class Calendar extends StylePluginBase {
       ],
       '#default_value' => $this->options['calendar_type'] != 'day' ? $this->options['max_items_behavior'] : 'more',
       '#description' => $this->t('Behavior when there are more than the above number of items in a single day. When there more items than this limit, a link to the day view will be displayed.'),
-      '#dependency' => ['edit-style-options-calendar-type' => ['month']],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => ['value' => 'month'],
+        ],
+      ],
     ];
     $form['groupby_times'] = [
       '#title' => $this->t('Time grouping'),
@@ -262,8 +285,13 @@ class Calendar extends StylePluginBase {
         'half' => $this->t('Half hour'),
         'custom' => $this->t('Custom'),
       ],
-      '#dependency' => [
-        'edit-style-options-calendar-type' => ['day', 'week'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => [
+            ['value' => 'day'],
+            ['value' => 'week'],
+          ],
+        ],
       ],
     ];
     $form['groupby_times_custom'] = [
@@ -271,7 +299,11 @@ class Calendar extends StylePluginBase {
       '#type' => 'textarea',
       '#default_value' => $this->options['groupby_times_custom'],
       '#description' => $this->t("When choosing the 'custom' Time grouping option above, create custom time period groupings as a comma-separated list of 24-hour times in the format HH:MM:SS, like '00:00:00,08:00:00,18:00:00'. Be sure to start with '00:00:00'. All items after the last time will go in the final group."),
-      '#dependency' => ['edit-style-options-groupby-times' => ['custom']],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[groupby_times]"]' => ['value' => 'custom'],
+        ],
+      ],
     ];
     $form['theme_style'] = [
       '#title' => $this->t('Overlapping time style'),
@@ -283,8 +315,13 @@ class Calendar extends StylePluginBase {
         2 => $this->t('Display overlapping items, no scrolling'),
       ],
       '#description' => $this->t('Select whether calendar items are displayed as overlapping items. Use scrolling to shrink the window and focus on the selected items, or omit scrolling to display the whole day. This only works if hour or half hour time grouping is chosen!'),
-      '#dependency' => [
-        'edit-style-options-calendar-type' => ['day', 'week'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => [
+            ['value' => 'day'],
+            ['value' => 'week'],
+          ],
+        ],
       ],
     ];
 
@@ -300,7 +337,11 @@ class Calendar extends StylePluginBase {
       '#default_value' => $this->options['groupby_field'],
       '#description' => $this->t("Optionally group items into columns by a field value, for instance select the content type to show items for each content type in their own column, or use a location field to organize items into columns by location. NOTE! This is incompatible with the overlapping style option."),
       '#options' => ['' => ''] + $field_options,
-      '#dependency' => ['edit-style-options-calendar-type' => ['day']],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => ['value' => 'day'],
+        ],
+      ],
     ];
     $form['multiday_theme'] = [
       '#title' => $this->t('Multi-day style'),
@@ -311,8 +352,13 @@ class Calendar extends StylePluginBase {
         1 => $this->t('Display multi-day item as a multiple column row')
       ],
       '#description' => $this->t('If selected, items which span multiple days will displayed as a multi-column row.  If not selected, items will be displayed as an individual column.'),
-      '#dependency' => [
-        'edit-style-options-calendar-type' => ['month', 'week'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => [
+            ['value' => 'month'],
+            ['value' => 'week'],
+          ],
+        ],
       ],
     ];
     $form['multiday_hidden'] = [
@@ -321,8 +367,14 @@ class Calendar extends StylePluginBase {
       '#type' => 'checkboxes',
       '#options' => $field_options,
       '#description' => $this->t('Choose fields to hide when displayed in multi-day rows. Usually you only want to see the title or Colorbox selector in multi-day rows and would hide all other fields.'),
-      '#dependency' => [
-        'edit-style-options-calendar-type' => ['month', 'week', 'day'],
+      '#states' => [
+        'visible' => [
+          ':input[name="style_options[calendar_type]"]' => [
+            ['value' => 'month'],
+            ['value' => 'week'],
+            ['value' => 'day'],
+          ],
+        ],
       ],
     ];
   }
