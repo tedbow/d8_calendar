@@ -375,7 +375,7 @@ class Calendar extends RowPluginBase {
 
       // @todo clean up
 //      $table_name  = $info['table_name'];
-//      $delta_field = $info['delta_field'];
+      $delta_field = $info['delta_field'];
 //      $tz_handling = $info['tz_handling'];
 //      $tz_field    = $info['timezone_field'];
 //      $rrule_field = $info['rrule_field'];
@@ -397,7 +397,7 @@ class Calendar extends RowPluginBase {
       $increment = 1;
 
       // @todo implement
-      if (FALSE && $info['is_field']) {
+      if ($info['is_field']) {
 
         // Set the date_id for the node, used to identify which field value to display for
         // fields that have multiple values. The theme expects it to be an array.
@@ -413,19 +413,26 @@ class Calendar extends RowPluginBase {
           $entity->date_id = ['calendar.' . $id . '.' . $field_name . '.' . $delta];
         }
 
-        $items = field_get_items($this->entity_type, $entity, $field_name, $this->language);
-        $item  = $items[$delta];
-        $db_tz   = date_get_timezone_db($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
-        $to_zone = date_get_timezone($tz_handling, isset($item->$tz_field)) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone());
-        if (isset($item['value'])) {
-          $item_start_date = new dateObject($item['value'], $db_tz);
-          $item_end_date   = array_key_exists('value2', $item) ? new dateObject($item['value2'], $db_tz) : $item_start_date;
+        /** @var \Drupal\Core\Field\FieldItemList $field */
+        $field = $entity->getFields()[$field_name];
+//        $items = field_get_items($this->entity_type, $entity, $field_name, $this->language);
+//        $item  = $items[$delta];
+//        $db_tz   = date_get_timezone_db($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
+//        $to_zone = date_get_timezone($tz_handling, isset($item->$tz_field)) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone());
+        if (!empty($field->getValue())) {
+//          $item_start_date = new dateObject($item['value'], $db_tz);
+          $item_start_date = new \DateTime();
+          $item_start_date->setTimestamp($field->getValue()[0]['value']);
+//          $item_end_date   = array_key_exists('value2', $item) ? new dateObject($item['value2'], $db_tz) : $item_start_date;
+          $item_end_date   = $item_start_date;
         }
 
-        $cck_field = field_info_field($field_name);
-        $instance = field_info_instance($this->entity_type, $field_name, $this->type);
-        $granularity = date_granularity_precision($cck_field['settings']['granularity']);
-        $increment = $instance['widget']['settings']['increment'];
+//        $cck_field = field_info_field($field_name);
+//        $instance = field_info_instance($this->entity_type, $field_name, $this->type);
+        // @todo don't hardcode
+//        $granularity = date_granularity_precision($cck_field['settings']['granularity']);
+        $granularity = 'week';
+//        $increment = $instance['widget']['settings']['increment'];
 
       }
       elseif ($entity->get($field_name)) {
@@ -453,12 +460,12 @@ class Calendar extends RowPluginBase {
       $event->setStartDate($item_start_date);
       $event->setEndDate($item_end_date);
       $event->setTimezone(new \DateTimeZone(timezone_name_get($dateInfo->getTimezone())));
+      $event->setGranularity($granularity);
 
       // @todo remove while properties get transfered to the new object
 //      $event_container = new stdClass();
 //      $event_container->db_tz = $db_tz;
 //      $event_container->to_zone = $to_zone;
-//      $event_container->granularity = $granularity;
 //      $event_container->increment = $increment;
 //      $event_container->field = $is_field ? $item : NULL;
 //      $event_container->row = $row;

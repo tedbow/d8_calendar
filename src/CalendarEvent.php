@@ -42,6 +42,12 @@ class CalendarEvent {
   protected $endDate;
 
   /**
+   * @var string $granularity
+   *   The granularity of this event (e.g. "day", "second").
+   */
+  protected $granularity;
+
+  /**
    * @var boolean
    *   Defines whether or not this event's duration is all day.
    */
@@ -187,6 +193,26 @@ class CalendarEvent {
    */
   public function setEndDate($endDate) {
     $this->endDate = $endDate;
+  }
+
+  /**
+   * Getter for the event granularity.
+   *
+   * @return string
+   *   The event granularity.
+   */
+  public function getGranularity() {
+    return $this->granularity;
+  }
+
+  /**
+   * Setter for the event granularity.
+   *
+   * @param string $granularity
+   *   The event granularity.
+   */
+  public function setGranularity($granularity) {
+    $this->granularity = $granularity;
   }
 
   /**
