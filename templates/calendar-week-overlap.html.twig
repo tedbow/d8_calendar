@@ -129,11 +129,11 @@
         <tr>
           {% for i in 0..7 %}
             {% if loop.first %}
-              <td class="first" headers="{{ header_ids[loop.index0] }}">
+              <td class="first">
             {% elseif loop.index0 == 7 %}
-              <td class="last">
+              <td class="last" headers="{{ header_ids[loop.index0 - 1] }}">
             {% else %}
-              <td headers="{{ header_ids[loop.index0] }}">
+              <td headers="{{ header_ids[loop.index0 - 1] }}">
             {% endif %}
 
             {% for time_cnt, start_time in start_times %}
@@ -156,8 +156,8 @@
                   <div class="calendar item-wrapper">
                     <div class="inner">
                       {#{% if items[start_time]['values'] is not empty %}{{ dump(items[start_time]['values']) }}{% endif %}#}
-                      {% if items[start_time]['values'][loop.parent.loop.index0] %}
-                        {% for item in items[start_time]['values'][loop.parent.loop.index0] %}
+                      {% if items[start_time]['values'][loop.parent.loop.index0 - 1] %}
+                        {% for item in items[start_time]['values'][loop.parent.loop.index0 - 1] %}
                           {% if item['is_first'] %}
                             <div class="item {{ item.class }} first_item">
                           {% else %}
