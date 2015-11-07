@@ -81,7 +81,7 @@ function calendar_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'help.page.calendar':
       return '<p>' . t('View complete documentation at <a href=":link">Date and Calendar Documentation</a>.',
-      	array(':link' => 'http://drupal.org/node/262062')) . '</p>';
+      	[':link' => 'http://drupal.org/node/262062']) . '</p>';
   }
 }
 
@@ -154,7 +154,7 @@ function calendar_theme() {
  * Default settings array for calendar time grouping.
  */
 function calendar_groupby_times($type = '') {
-  $times = array();
+  $times = [];
   switch ($type) {
     case 'hour':
       for ($i = 0; $i <= 23; $i++) {
@@ -187,7 +187,7 @@ function calendar_groupby_times($type = '') {
  */
 function calendar_granularity_path(ViewExecutable &$view, $granularity) {
   // @todo Find out what should happen here.
-  $paths = &drupal_static(__FUNCTION__, array());
+  $paths = &drupal_static(__FUNCTION__, []);
   $view_name = $view->id();
   if (!array_key_exists($view_name, $paths) || (isset($paths[$view->id()]) && !(array_key_exists($granularity, $paths[$view->id()])))) {
     $paths[$view_name][$granularity] = '';

@@ -397,12 +397,12 @@ class CalendarHelper extends DateHelper {
     $all_fields = self::viewsFetchFields($base, 'filter');
 
     // Iterate over all the fields that Views knows about.
-    $fields = array();
+    $fields = [];
     foreach ((array) $all_fields as $alias => $value) {
       // Set up some default values.
-      $granularity = array('year', 'month', 'day', 'hour', 'minute', 'second');
+      $granularity = ['year', 'month', 'day', 'hour', 'minute', 'second'];
       $tz_handling = 'site';
-      $related_fields = array();
+      $related_fields = [];
       $timezone_field = '';
       $offset_field = '';
       $rrule_field = '';
@@ -421,7 +421,7 @@ class CalendarHelper extends DateHelper {
         continue;
       }
 
-      $fromto = array($name, $name);
+      $fromto = [$name, $name];
 
 
       // If we don't have a filter handler, we don't need to do anything more.
@@ -442,7 +442,7 @@ class CalendarHelper extends DateHelper {
       $is_field = FALSE;
 
       // For Field module fields, get the date type.
-      $custom = array();
+      $custom = [];
       if ($field_name || isset($handler->definition['field_name'])) {
 //        $field = FieldConfig::loadByName($field_name);
 //        $field = field_info_field($handler->definition['field_name']);
@@ -471,7 +471,7 @@ class CalendarHelper extends DateHelper {
         // @todo find database info
 //        $db_info = date_api_database_info($field, $revision);
         $name = $table_name . "." . $field_name;
-        $grans = array('year', 'month', 'day', 'hour', 'minute', 'second');
+        $grans = ['year', 'month', 'day', 'hour', 'minute', 'second'];
         $granularity = !empty($field['granularity']) ? $field['granularity'] : $grans;
 
 //        $fromto = array(
@@ -520,7 +520,7 @@ class CalendarHelper extends DateHelper {
       // Don't do anything if this is not a date field we can handle.
       if (!empty($type) || empty($custom)) {
         $alias = str_replace('.', '_', $alias);
-        $fields['name'][$name] = array(
+        $fields['name'][$name] = [
           'is_field' => $is_field,
           'sql_type' => $sql_type,
 //          'label' => $val['group'] . ': ' . $val['title'],
@@ -536,7 +536,7 @@ class CalendarHelper extends DateHelper {
           'rrule_field' => $rrule_field,
           'related_fields' => $related_fields,
           'delta_field' => $delta_field,
-        );
+        ];
 
         // Allow the custom fields to over-write values.
         if (!empty($custom)) {
@@ -564,7 +564,7 @@ class CalendarHelper extends DateHelper {
    * @return array
    */
   private static function viewsFetchFields($base, $type, $grouping = FALSE) {
-    static $fields = array();
+    static $fields = [];
     if (empty($fields)) {
       $data = Views::viewsData()->get();
       $start = microtime(TRUE);
@@ -579,9 +579,9 @@ class CalendarHelper extends DateHelper {
       // each field have a cheap kind of inheritance.
 
       foreach ($data as $table => $table_data) {
-        $bases = array();
-        $strings = array();
-        $skip_bases = array();
+        $bases = [];
+        $strings = [];
+        $skip_bases = [];
         foreach ($table_data as $field => $info) {
           // Collect table data from this table
           if ($field == 'table') {
@@ -593,7 +593,7 @@ class CalendarHelper extends DateHelper {
             $bases[] = $table;
             continue;
           }
-          foreach (array('field', 'sort', 'filter', 'argument', 'relationship', 'area') as $key) {
+          foreach (['field', 'sort', 'filter', 'argument', 'relationship', 'area'] as $key) {
             if (!empty($info[$key])) {
               if ($grouping && !empty($info[$key]['no group by'])) {
                 continue;
@@ -612,7 +612,7 @@ class CalendarHelper extends DateHelper {
               if (isset($info[$key]['moved to'])) {
                 continue;
               }
-              foreach (array('title', 'group', 'help', 'base', 'aliases') as $string) {
+              foreach (['title', 'group', 'help', 'base', 'aliases'] as $string) {
                 // First, try the lowest possible level
                 if (!empty($info[$key][$string])) {
                   $strings[$field][$key][$string] = $info[$key][$string];
@@ -627,7 +627,7 @@ class CalendarHelper extends DateHelper {
                 }
                 else {
                   if ($string != 'base' && $string != 'base') {
-                    $strings[$field][$key][$string] = t("Error: missing @component", array('@component' => $string));
+                    $strings[$field][$key][$string] = t("Error: missing @component", ['@component' => $string]);
                   }
                 }
               }
@@ -651,7 +651,7 @@ class CalendarHelper extends DateHelper {
     // all and add them together. Duplicate keys will be lost and that's
     // Just Fine.
     if (is_array($base)) {
-      $strings = array();
+      $strings = [];
       foreach ($base as $base_table) {
         if (isset($fields[$base_table][$type])) {
           $strings += $fields[$base_table][$type];

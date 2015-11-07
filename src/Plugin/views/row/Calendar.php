@@ -271,7 +271,7 @@ class Calendar extends RowPluginBase {
       return;
     }
     if (!preg_match('/^#(?:(?:[a-f\d]{3}){1,2})$/i', $element['#value'])) {
-      $form_state->setError($element, $this->t("'@color' is not a valid hex color", array('@color' => $element['#value'])));
+      $form_state->setError($element, $this->t("'@color' is not a valid hex color", ['@color' => $element['#value']]));
     }
     else {
       $form_state->setValueForElement($element, $element['#value']);
