@@ -13,14 +13,11 @@ use Drupal\calendar\Plugin\views\argument\CalendarDate;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\TypedData\Plugin\DataType\DateTimeIso8601;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
-use Drupal\views\Plugin\views\display\DisplayRouterInterface;
 use Drupal\views\Plugin\views\row\RowPluginBase;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Plugin which creates a view on the resulting object and formats it as a
