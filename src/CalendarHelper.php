@@ -233,27 +233,35 @@ class CalendarHelper extends DateHelper {
   }
 
   /**
-   * @deprecated
-   *   This is a copy of the date_is_all_day() function from the date_api
-   *   module in D7.
-   * @TODO figure out where this should live
+   * Checks if an event covers all day.
+   *
+   * @param string $start
+   *   The start date.
+   * @param string $end
+   *   The end date.
+   * @param string $granularity
+   *   Granularity to be used during the calculation, defaults to "second".
+   * @param int $increment
+   *   An integer value to increment the values. Defaults to 1.
+   *
+   * @return bool
    */
-  public static function dateIsAllDay($string1, $string2, $granularity = 'second', $increment = 1) {
-    if (empty($string1) || empty($string2)) {
+  public static function dateIsAllDay($start, $end, $granularity = 'second', $increment = 1) {
+    if (empty($start) || empty($end)) {
       return FALSE;
     }
     elseif (!in_array($granularity, ['hour', 'minute', 'second'])) {
       return FALSE;
     }
 
-    preg_match('/([0-9]{4}-[0-9]{2}-[0-9]{2}) (([0-9]{2}):([0-9]{2}):([0-9]{2}))/', $string1, $matches);
+    preg_match('/([0-9]{4}-[0-9]{2}-[0-9]{2}) (([0-9]{2}):([0-9]{2}):([0-9]{2}))/', $start, $matches);
     $count = count($matches);
     $date1 = $count > 1 ? $matches[1] : '';
     $time1 = $count > 2 ? $matches[2] : '';
     $hour1 = $count > 3 ? intval($matches[3]) : 0;
     $min1 = $count > 4 ? intval($matches[4]) : 0;
     $sec1 = $count > 5 ? intval($matches[5]) : 0;
-    preg_match('/([0-9]{4}-[0-9]{2}-[0-9]{2}) (([0-9]{2}):([0-9]{2}):([0-9]{2}))/', $string2, $matches);
+    preg_match('/([0-9]{4}-[0-9]{2}-[0-9]{2}) (([0-9]{2}):([0-9]{2}):([0-9]{2}))/', $end, $matches);
     $count = count($matches);
     $date2 = $count > 1 ? $matches[1] : '';
     $time2 = $count > 2 ? $matches[2] : '';
@@ -272,8 +280,8 @@ class CalendarHelper extends DateHelper {
     $tmp = self::minutes('i', TRUE, $increment);
     $max_minutes = intval(array_pop($tmp));
 
-    // See if minutes and seconds are the maximum allowed for an increment or the
-    // maximum possible (59), or 0.
+    // See if minutes and seconds are the maximum allowed for an increment or
+    // the maximum possible (59), or 0.
     switch ($granularity) {
       case 'second':
         $min_match = $time1 == '00:00:00'
