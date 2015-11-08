@@ -3,6 +3,7 @@ type: module
 description: 'Views plugin to display views containing dates as Calendars.'
 dependencies:
   - views
+  - views_templates
 package: Date/Time
 core: 8.x
 version: VERSION
