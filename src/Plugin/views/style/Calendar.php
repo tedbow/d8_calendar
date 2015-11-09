@@ -157,6 +157,13 @@ class Calendar extends StylePluginBase {
   /**
    * {@inheritdoc}
    */
+  public function evenEmpty() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function defineOptions() {
     $options = parent::defineOptions();
 
