@@ -655,10 +655,11 @@ class Calendar extends StylePluginBase {
         if ($i == 0 && !empty($this->styleInfo->isShowWeekNumbers()) && !in_array($this->dateInfo->getGranularity(), ['day', 'week'])) {
           $path = calendar_granularity_path($this->view, 'week');
           if (!empty($path)) {
-            // @TODO find out what append should do
-            $options = ['query' => !empty($this->styleInfo->append) ? $this->styleInfo->append : ''];
-            $url = Url::fromUri($path . '/' . $this->dateInfo->getMinYear() . '-W' . $week, $options);
-            $week_number = \Drupal::l($week, $url);
+            $week_number = [
+              '#type' => 'link',
+              '#url' => Url::fromUri('base:' . $path . '/' . $this->dateInfo->getMinYear() . '-W' . $week),
+              '#title' => $week,
+            ];
           }
           else {
             // Do not link week numbers, if week views are disabled.
@@ -972,9 +973,11 @@ class Calendar extends StylePluginBase {
     if (!empty($this->styleInfo->isShowWeekNumbers())) {
       $path = calendar_granularity_path($this->view, 'week');
       if (!empty($path)) {
-        $url = $path . '/' . $this->dateInfo->getMinYear() . '-W' . $week;
-        // @TODO find out what append should do
-        $week_number = l($week, $url, ['query' => !empty($this->styleInfo->append) ? $this->styleInfo->append : '']);
+        $week_number = [
+          '#type' => 'link',
+          '#url' => Url::fromUri('base:' . $path . '/' . $this->dateInfo->getMinYear() . '-W' . $week),
+          '#title' => $week,
+        ];
       }
       else {
         // Do not link week numbers, if Week views are disabled.
