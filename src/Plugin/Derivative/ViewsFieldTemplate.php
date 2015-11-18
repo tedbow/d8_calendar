@@ -142,6 +142,16 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
     $field_id = $field_info['entity field'];
     $derivative_id = "$entity_type_id:$field_id";
 
+    // Create base path
+    if ($entity_type_id == 'node') {
+      // For node use a shorter path.
+      $base_path = "calendar-$field_id";
+    }
+    else {
+      // For all other entity types include type in path
+      $base_path = "calendar-$entity_type_id-$field_id";
+    }
+
     $this->derivatives[$derivative_id] = array(
       'id' => $base_plugin_definition['id'] . ':' . $derivative_id,
       'entity_label' => $entity_type->getLabel()->render(),
@@ -157,6 +167,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
         '__ENTITY_TYPE' => $entity_type_id,
         '__FIELD_LABEL' => $field_title->render(),
         '__TABLE_LABEL' => $entity_type->getLabel()->render(),
+        '__BASE_PATH' => $base_path,
       ]
     ) + $base_plugin_definition;
   }

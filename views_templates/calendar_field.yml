@@ -197,10 +197,10 @@ display:
             operator: ''
           group: 1
       sorts:
-        created:
-          id: created
+        __FIELD_ID:
+          id: __FIELD_ID
           table: __BASE_TABLE
-          field: created
+          field: __FIELD_ID
           relationship: none
           group_type: group
           admin_label: ''
@@ -210,7 +210,7 @@ display:
             label: ''
           granularity: second
           entity_type: __ENTITY_TYPE
-          entity_field: created
+          entity_field: __FIELD_ID
           plugin_id: date
       header: {  }
       footer: {  }
@@ -271,7 +271,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: calendar-created/month
+      path: __BASE_PATH/month
       display_description: ''
       menu:
         type: 'default tab'
@@ -333,7 +333,7 @@ display:
               page: '#ffffff'
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
-      path: calendar-created/week
+      path: __BASE_PATH/week
       menu:
         type: tab
         title: Week
@@ -427,7 +427,7 @@ display:
               page: '#ffffff'
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
-      path: calendar-created/day
+      path: __BASE_PATH/day
       menu:
         type: tab
         title: Day
@@ -559,7 +559,7 @@ display:
             date_range: '-3:+3'
           entity_type: __ENTITY_TYPE
           plugin_id: calendar_datetime
-      path: calendar-created/year
+      path: __BASE_PATH/year
       menu:
         type: tab
         title: Year
