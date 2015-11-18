@@ -1,7 +1,7 @@
 langcode: en
 status: true
 id: calendar_field
-label: Calendar
+label: '__TABLE_LABEL __FIELD_LABEL Calendar'
 module: views
 description: 'A calendar view of the ''__FIELD_LABEL'' field in the ''__TABLE_LABEL'' base table'
 tag: ''

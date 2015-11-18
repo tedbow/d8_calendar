@@ -9,6 +9,7 @@ namespace Drupal\calendar\Plugin\Derivative;
 
 
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\views\ViewsData;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -79,6 +80,9 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
   }
 
   public function getDerivativeDefinitions($base_plugin_definition) {
+    /**
+     * @var \Drupal\Core\Entity\EntityTypeInterface $entity_type_id
+     */
     foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
       // Just add support for entity types which have a views integration.
       if (($base_table = $entity_type->getBaseTable()) && $this->viewsData->get($base_table) && $this->entityManager->hasHandler($entity_type_id, 'view_builder')) {
@@ -87,7 +91,8 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
 
         foreach ($entity_views_data as $key => $field_info) {
           if ($this->isDateField($field_info)) {
-            $field_info['table'] = $base_table;
+            $field_info['base_table'] = $base_table;
+            $field_info['base_field'] = $entity_views_data['table']['base']['field'];
             $this->setDerivative($field_info, $entity_type, $base_plugin_definition);
 
           }
@@ -96,7 +101,8 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
           $entity_data_views_data = $this->viewsData->get($data_table);
           foreach ($entity_data_views_data as $key => $field_info) {
             if ($this->isDateField($field_info)) {
-              $field_info['table'] = $data_table;
+              $field_info['base_table'] = $data_table;
+              $field_info['base_field'] = $entity_data_views_data['table']['base']['field'];
               $this->setDerivative($field_info, $entity_type, $base_plugin_definition);
 
             }
@@ -129,7 +135,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
    * @param $entity_type
    * @param $base_plugin_definition
    */
-  protected function setDerivative($field_info, $entity_type, $base_plugin_definition) {
+  protected function setDerivative($field_info, EntityTypeInterface $entity_type, $base_plugin_definition) {
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $field_title */
     $field_title = $field_info['title'];
     $entity_type_id = $entity_type->id();
@@ -142,7 +148,16 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
       'field_label' => $field_title->render(),
       'entity_type' => $entity_type_id,
       'field_id' => $field_id,
-      'table' => $field_info['table'],
+      'table' => $field_info['base_table'],
+      'base_table' => $field_info['base_table'],
+      'replace_values' => [
+        '__BASE_TABLE' => $field_info['base_table'],
+        '__BASE_FIELD' => $field_info['base_field'],
+        '__FIELD_ID' => $field_id,
+        '__ENTITY_TYPE' => $entity_type_id,
+        '__FIELD_LABEL' => $field_title->render(),
+        '__TABLE_LABEL' => $entity_type->getLabel()->render(),
+      ]
     ) + $base_plugin_definition;
   }
 
