@@ -86,14 +86,13 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
     foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
       // Just add support for entity types which have a views integration.
       if (($base_table = $entity_type->getBaseTable()) && $this->viewsData->get($base_table) && $this->entityManager->hasHandler($entity_type_id, 'view_builder')) {
-        $entity_label = $entity_type->getLabel();
         $entity_views_data = $this->viewsData->get($base_table);
 
         foreach ($entity_views_data as $key => $field_info) {
           if ($this->isDateField($field_info)) {
             $field_info['base_table'] = $base_table;
             $field_info['base_field'] = $entity_views_data['table']['base']['field'];
-            $this->setDerivative($field_info, $entity_type, $base_plugin_definition);
+            $this->setDerivative($field_info, $entity_type, $entity_views_data, $base_plugin_definition);
 
           }
         }
@@ -103,7 +102,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
             if ($this->isDateField($field_info)) {
               $field_info['base_table'] = $data_table;
               $field_info['base_field'] = $entity_data_views_data['table']['base']['field'];
-              $this->setDerivative($field_info, $entity_type, $base_plugin_definition);
+              $this->setDerivative($field_info, $entity_type, $entity_data_views_data, $base_plugin_definition);
 
             }
           }
@@ -135,7 +134,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
    * @param $entity_type
    * @param $base_plugin_definition
    */
-  protected function setDerivative($field_info, EntityTypeInterface $entity_type, $base_plugin_definition) {
+  protected function setDerivative($field_info, EntityTypeInterface $entity_type, array $table_data, array $base_plugin_definition) {
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $field_title */
     $field_title = $field_info['title'];
     $entity_type_id = $entity_type->id();
@@ -152,7 +151,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
       $base_path = "calendar-$entity_type_id-$field_id";
     }
 
-    $this->derivatives[$derivative_id] = array(
+    $derivative = array(
       'id' => $base_plugin_definition['id'] . ':' . $derivative_id,
       'entity_label' => $entity_type->getLabel()->render(),
       'field_label' => $field_title->render(),
@@ -168,8 +167,28 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
         '__FIELD_LABEL' => $field_title->render(),
         '__TABLE_LABEL' => $entity_type->getLabel()->render(),
         '__BASE_PATH' => $base_path,
+
       ]
     ) + $base_plugin_definition;
+
+    if (!empty($table_data['table']['base']['defaults']['field'])) {
+      $derivative['replace_values']['__DEFAULT_FIELD_ID'] = $table_data['table']['base']['defaults']['field'];
+    }
+    else {
+      // @todo Why doesn't user have a default field? Is there another way to get it?
+      if ($entity_type_id == 'user') {
+
+        $derivative['replace_values']['__DEFAULT_FIELD_ID'] = 'name';
+      }
+      else {
+        // Setting to NULL will remove values from template if key is matched.
+        $derivative['replace_values']['__DEFAULT_FIELD_ID'] = NULL;
+      }
+
+    }
+
+    // @todo Change permission in View to permission that associated with Entity Type.
+    $this->derivatives[$derivative_id] = $derivative;
   }
 
 

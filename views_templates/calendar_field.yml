@@ -117,10 +117,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        created:
-          id: created
+        __DEFAULT_FIELD_ID:
+          id: __DEFAULT_FIELD_ID
           table: __BASE_TABLE
-          field: created
+          field: __DEFAULT_FIELD_ID
           relationship: none
           group_type: group
           admin_label: ''
@@ -166,11 +166,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: timestamp
-          settings:
-            date_format: medium
-            custom_date_format: ''
-            timezone: ''
           group_column: value
           group_columns: {  }
           group_rows: true
