@@ -8,7 +8,7 @@
 namespace Drupal\calendar\Plugin\Derivative;
 
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\views\ViewsData;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Derivative class to find all field and properties for calendar View Builders.
  */
-class ViewsFieldTemplate implements  ContainerDeriverInterface{
+class ViewsFieldTemplate implements ContainerDeriverInterface {
 
   /**
    * List of derivative definitions.
@@ -36,7 +36,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
@@ -50,7 +50,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static (
       $base_plugin_id,
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('views.views_data')
     );
 
@@ -61,10 +61,11 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
    *
    * @param string $base_plugin_id
    *   The base plugin ID.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $view_storage
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $manager
+   * @param ViewsData $views_data
    *   The entity storage to load views.
    */
-  public function __construct($base_plugin_id, EntityManagerInterface $manager, ViewsData $views_data) {
+  public function __construct($base_plugin_id, EntityTypeManagerInterface $manager, ViewsData $views_data) {
     $this->basePluginId = $base_plugin_id;
     $this->entityManager = $manager;
     $this->viewsData = $views_data;
@@ -96,7 +97,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
 
           }
         }
-        if($data_table = $entity_type->getDataTable()) {
+        if ($data_table = $entity_type->getDataTable()) {
           $entity_data_views_data = $this->viewsData->get($data_table);
           foreach ($entity_data_views_data as $key => $field_info) {
             if ($this->isDateField($field_info)) {
@@ -130,9 +131,12 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
   }
 
   /**
+   * Set the derivative for a field on an entity type.
+   *
    * @param $field_info
-   * @param $entity_type
-   * @param $base_plugin_definition
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param array $table_data
+   * @param array $base_plugin_definition
    */
   protected function setDerivative($field_info, EntityTypeInterface $entity_type, array $table_data, array $base_plugin_definition) {
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $field_title */
@@ -153,7 +157,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
 
     $derivative = array(
       'id' => $base_plugin_definition['id'] . ':' . $derivative_id,
-      'entity_label' => $entity_type->getLabel()->render(),
+      'entity_label' => $entity_type->getLabel(),
       'field_label' => $field_title->render(),
       'entity_type' => $entity_type_id,
       'field_id' => $field_id,
@@ -165,7 +169,7 @@ class ViewsFieldTemplate implements  ContainerDeriverInterface{
         '__FIELD_ID' => $field_id,
         '__ENTITY_TYPE' => $entity_type_id,
         '__FIELD_LABEL' => $field_title->render(),
-        '__TABLE_LABEL' => $entity_type->getLabel()->render(),
+        '__TABLE_LABEL' => $entity_type->getLabel(),
         '__BASE_PATH' => $base_path,
 
       ]

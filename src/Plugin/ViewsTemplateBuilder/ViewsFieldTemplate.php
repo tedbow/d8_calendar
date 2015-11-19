@@ -9,11 +9,10 @@
 namespace Drupal\calendar\Plugin\ViewsTemplateBuilder;
 
 
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\views_templates\Plugin\ViewsDuplicateBuilderBase;
 use Drupal\views_templates\ViewsTemplateLoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
 
 /**
  * Views Template for all calendar fields.
