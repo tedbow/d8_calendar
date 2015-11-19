@@ -1,16 +1,12 @@
 langcode: en
 status: true
-dependencies:
-  module:
-    - node
-    - user
-id: calendar_node_created
-label: Calendar
+id: calendar_field
+label: '__TABLE_LABEL __FIELD_LABEL Calendar'
 module: views
-description: 'A calendar view of the ''created'' field in the ''node'' base table'
+description: 'A calendar view of the ''__FIELD_LABEL'' field in the ''__TABLE_LABEL'' base table'
 tag: ''
-base_table: node_field_data
-base_field: nid
+base_table: __BASE_TABLE
+base_field: __BASE_FIELD
 core: 8.x
 display:
   default:
@@ -74,12 +70,12 @@ display:
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
       fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          entity_type: node
-          entity_field: title
+        __FIELD_ID:
+          id: __FIELD_ID
+          table: __BASE_TABLE
+          field: __FIELD_ID
+          entity_type: __ENTITY_TYPE
+          entity_field: __FIELD_ID
           label: ''
           alter:
             alter_text: false
@@ -121,10 +117,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        created:
-          id: created
-          table: node_field_data
-          field: created
+        __DEFAULT_FIELD_ID:
+          id: __DEFAULT_FIELD_ID
+          table: __BASE_TABLE
+          field: __DEFAULT_FIELD_ID
           relationship: none
           group_type: group
           admin_label: ''
@@ -170,11 +166,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: timestamp
-          settings:
-            date_format: medium
-            custom_date_format: ''
-            timezone: ''
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -185,26 +176,26 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
+          entity_type: __ENTITY_TYPE
           entity_field: created
           plugin_id: field
       filters:
         status:
           value: true
-          table: node_field_data
+          table: __BASE_TABLE
           field: status
           plugin_id: boolean
-          entity_type: node
+          entity_type: __ENTITY_TYPE
           entity_field: status
           id: status
           expose:
             operator: ''
           group: 1
       sorts:
-        created:
-          id: created
-          table: node_field_data
-          field: created
+        __FIELD_ID:
+          id: __FIELD_ID
+          table: __BASE_TABLE
+          field: __FIELD_ID
           relationship: none
           group_type: group
           admin_label: ''
@@ -213,8 +204,8 @@ display:
           expose:
             label: ''
           granularity: second
-          entity_type: node
-          entity_field: created
+          entity_type: __ENTITY_TYPE
+          entity_field: __FIELD_ID
           plugin_id: date
       header: {  }
       footer: {  }
@@ -223,7 +214,7 @@ display:
       arguments:
         created_calendar:
           id: created_calendar
-          table: node_field_data
+          table: __BASE_TABLE
           field: created_calendar
           relationship: none
           group_type: group
@@ -256,7 +247,7 @@ display:
           calendar:
             granularity: month
             date_range: '-3:+3'
-          entity_type: node
+          entity_type: __ENTITY_TYPE
           plugin_id: calendar_datetime
       display_extenders: {  }
     cache_metadata:
@@ -275,7 +266,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: calendar-created/month
+      path: __BASE_PATH/month
       display_description: ''
       menu:
         type: 'default tab'
@@ -337,7 +328,7 @@ display:
               page: '#ffffff'
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
-      path: calendar-created/week
+      path: __BASE_PATH/week
       menu:
         type: tab
         title: Week
@@ -350,7 +341,7 @@ display:
       arguments:
         created_calendar:
           id: created_calendar
-          table: node_field_data
+          table: __BASE_TABLE
           field: created_calendar
           relationship: none
           group_type: group
@@ -383,7 +374,7 @@ display:
           calendar:
             granularity: week
             date_range: '-3:+3'
-          entity_type: node
+          entity_type: __ENTITY_TYPE
           plugin_id: calendar_datetime
     cache_metadata:
       max-age: -1
@@ -431,7 +422,7 @@ display:
               page: '#ffffff'
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
-      path: calendar-created/day
+      path: __BASE_PATH/day
       menu:
         type: tab
         title: Day
@@ -444,7 +435,7 @@ display:
       arguments:
         created_calendar:
           id: created_calendar
-          table: node_field_data
+          table: __BASE_TABLE
           field: created_calendar
           relationship: none
           group_type: group
@@ -477,7 +468,7 @@ display:
           calendar:
             granularity: day
             date_range: '-3:+3'
-          entity_type: node
+          entity_type: __ENTITY_TYPE
           plugin_id: calendar_datetime
     cache_metadata:
       max-age: -1
@@ -528,7 +519,7 @@ display:
       arguments:
         created_calendar:
           id: created_calendar
-          table: node_field_data
+          table: __BASE_TABLE
           field: created_calendar
           relationship: none
           group_type: group
@@ -561,9 +552,9 @@ display:
           calendar:
             granularity: year
             date_range: '-3:+3'
-          entity_type: node
+          entity_type: __ENTITY_TYPE
           plugin_id: calendar_datetime
-      path: calendar-created/year
+      path: __BASE_PATH/year
       menu:
         type: tab
         title: Year
