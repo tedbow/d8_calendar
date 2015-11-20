@@ -8,8 +8,9 @@
 namespace Drupal\calendar\Plugin\Derivative;
 
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\views\ViewsData;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,11 +48,20 @@ class ViewsFieldTemplate implements ContainerDeriverInterface {
    */
   protected $viewsData;
 
+  /**
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $field_manager;
+
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static (
       $base_plugin_id,
       $container->get('entity_type.manager'),
-      $container->get('views.views_data')
+      $container->get('views.views_data'),
+      $container->get('entity_field.manager')
     );
 
   }
@@ -64,14 +74,19 @@ class ViewsFieldTemplate implements ContainerDeriverInterface {
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $manager
    * @param ViewsData $views_data
    *   The entity storage to load views.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
    */
-  public function __construct($base_plugin_id, EntityTypeManagerInterface $manager, ViewsData $views_data) {
+  public function __construct($base_plugin_id, EntityTypeManagerInterface $manager, ViewsData $views_data, EntityFieldManagerInterface $field_manager) {
     $this->basePluginId = $base_plugin_id;
     $this->entityManager = $manager;
     $this->viewsData = $views_data;
+    $this->field_manager = $field_manager;
   }
 
 
+  /**
+   * {@inheritdoc}
+   */
   public function getDerivativeDefinition($derivative_id, $base_plugin_definition) {
     if (!empty($this->derivatives) && !empty($this->derivatives[$derivative_id])) {
       return $this->derivatives[$derivative_id];
@@ -80,42 +95,98 @@ class ViewsFieldTemplate implements ContainerDeriverInterface {
     return $this->derivatives[$derivative_id];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getDerivativeDefinitions($base_plugin_definition) {
     /**
-     * @var \Drupal\Core\Entity\EntityTypeInterface $entity_type_id
+     * @var \Drupal\Core\Entity\EntityTypeInterface $entity_type
      */
     foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
       // Just add support for entity types which have a views integration.
       if (($base_table = $entity_type->getBaseTable()) && $this->viewsData->get($base_table) && $this->entityManager->hasHandler($entity_type_id, 'view_builder')) {
-        $entity_views_data = $this->viewsData->get($base_table);
-
-        foreach ($entity_views_data as $key => $field_info) {
-          if ($this->isDateField($field_info)) {
-            $field_info['base_table'] = $base_table;
-            $field_info['base_field'] = $entity_views_data['table']['base']['field'];
-            $this->setDerivative($field_info, $entity_type, $entity_views_data, $base_plugin_definition);
-
-          }
-        }
+        $entity_views_tables = [$base_table => $this->viewsData->get($base_table)];
         if ($data_table = $entity_type->getDataTable()) {
-          $entity_data_views_data = $this->viewsData->get($data_table);
-          foreach ($entity_data_views_data as $key => $field_info) {
+          $entity_views_tables[$data_table] = $this->viewsData->get($data_table);
+        }
+        foreach ($entity_views_tables as $table_id => $entity_views_table) {
+          foreach ($entity_views_table as $key => $field_info) {
             if ($this->isDateField($field_info)) {
-              $field_info['base_table'] = $data_table;
-              $field_info['base_field'] = $entity_data_views_data['table']['base']['field'];
-              $this->setDerivative($field_info, $entity_type, $entity_data_views_data, $base_plugin_definition);
-
+              $derivative = [
+                'replacements' => [
+                  'entity_label' => $entity_type->getLabel(),
+                  'entity_type' => $entity_type_id,
+                  'field_id' => $field_info['entity field'],
+                  'base_table' => $table_id,
+                  'base_field' => $this->getTableBaseField($entity_views_table),
+                  'default_field_id' => $this->getTableDefaultField($entity_views_table),
+                  'field_label' => $field_info['title'],
+                ],
+                'view_template_id' => 'calendar_base_field',
+              ];
+              $this->setDerivative($derivative, $base_plugin_definition);
             }
           }
         }
         // @todo Loop through all fields attached to this entity type.
         // The have different base tables that are joined to this table.
+        $this->setConfigurableFieldsDerivatives($entity_type, $base_plugin_definition);
       }
+
     }
     return $this->derivatives;
   }
 
   /**
+   * Set all derivatives for an entity type.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param array $base_plugin_definition
+   */
+  protected function setConfigurableFieldsDerivatives(EntityTypeInterface $entity_type, array $base_plugin_definition) {
+    /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_storage */
+    $field_storages = $this->field_manager->getFieldStorageDefinitions($entity_type->id());
+
+    foreach ($field_storages as $field_id => $field_storage) {
+      if ($field_storage->getType() == 'datetime') {
+        $entity_type_id = $entity_type->id();
+        // Find better way to get table name.
+        $field_table = $entity_type_id . '__' . $field_id;
+        $field_table_data = $this->viewsData->get($field_table);
+
+        if (isset($field_table_data[$field_id])) {
+          $derivative = [];
+          $field_info = $field_table_data[$field_id];
+          $derivative['field_id'] = $field_id;
+          $join_tables = array_keys($field_table_data['table']['join']);
+          // @todo Will there ever be more than 1 tables here?
+          $join_table = array_pop($join_tables);
+          $join_table_data = $this->viewsData->get($join_table);
+          $derivative = [
+            'replacements' => [
+              'field_id' => $field_id,
+              'entity_type' => $entity_type_id,
+              'entity_label' => $entity_type->getLabel(),
+              'field_label' => $field_info['title'],
+              'base_table' => $join_table,
+              'field_table' => $field_table,
+              'default_field_id' => $this->getTableDefaultField($join_table_data, $entity_type_id),
+              'base_field' => $this->getTableBaseField($join_table_data),
+            ],
+            'view_template_id' => 'calendar_config_field',
+          ];
+          $this->setDerivative($derivative, $base_plugin_definition);
+          //$this->setDerivative($field_info, $entity_type, $field_table_data, $base_plugin_definition);
+        }
+
+      }
+
+
+    }
+  }
+
+  /**
+   * Determine if a field is an date field.
    * @param array $field_info
    *  Field array form ViewsData.
    *
@@ -130,69 +201,62 @@ class ViewsFieldTemplate implements ContainerDeriverInterface {
     return FALSE;
   }
 
-  /**
-   * Set the derivative for a field on an entity type.
-   *
-   * @param $field_info
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   * @param array $table_data
-   * @param array $base_plugin_definition
-   */
-  protected function setDerivative($field_info, EntityTypeInterface $entity_type, array $table_data, array $base_plugin_definition) {
-    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $field_title */
-    $field_title = $field_info['title'];
-    $entity_type_id = $entity_type->id();
-    $field_id = $field_info['entity field'];
-    $derivative_id = "$entity_type_id:$field_id";
+  protected function setDerivative(array $derivative, array $base_plugin_definition) {
 
+    $info = $derivative['replacements'];
+
+    $derivative_id = $info['entity_type'] . '__' . $info['field_id'];
+    // Move some replacements values to root of derivative also.
+    $derivative['entity_type'] = $info['entity_type'];
+    $derivative['field_id'] = $info['field_id'];
     // Create base path
-    if ($entity_type_id == 'node') {
-      // For node use a shorter path.
-      $base_path = "calendar-$field_id";
+    if ($derivative['entity_type'] == 'node') {
+      $base_path = 'calendar-' .$derivative['field_id'];
     }
     else {
-      // For all other entity types include type in path
-      $base_path = "calendar-$entity_type_id-$field_id";
+      $base_path = "calendar-{$derivative['entity_type']}-{$derivative['field_id']}";
     }
+    $derivative['replacements']['base_path'] = $base_path;
+    $derivative['id'] = $base_plugin_definition['id'] . ':' . $derivative_id;
+    $derivative += $base_plugin_definition;
 
-    $derivative = array(
-      'id' => $base_plugin_definition['id'] . ':' . $derivative_id,
-      'entity_label' => $entity_type->getLabel(),
-      'field_label' => $field_title->render(),
-      'entity_type' => $entity_type_id,
-      'field_id' => $field_id,
-      'table' => $field_info['base_table'],
-      'base_table' => $field_info['base_table'],
-      'replace_values' => [
-        '__BASE_TABLE' => $field_info['base_table'],
-        '__BASE_FIELD' => $field_info['base_field'],
-        '__FIELD_ID' => $field_id,
-        '__ENTITY_TYPE' => $entity_type_id,
-        '__FIELD_LABEL' => $field_title->render(),
-        '__TABLE_LABEL' => $entity_type->getLabel(),
-        '__BASE_PATH' => $base_path,
+    $this->derivatives[$derivative_id] = $derivative;
+  }
 
-      ]
-    ) + $base_plugin_definition;
 
+  /**
+   * Return the default field from a View table array.
+   *
+   * @param array $table_data
+   *
+   * @return null|string
+   */
+  private function getTableDefaultField(array $table_data, $entity_type_id = NULL) {
+    $default_field_id = NULL;
     if (!empty($table_data['table']['base']['defaults']['field'])) {
-      $derivative['replace_values']['__DEFAULT_FIELD_ID'] = $table_data['table']['base']['defaults']['field'];
+      $default_field_id = $table_data['table']['base']['defaults']['field'];
     }
-    else {
+    if (empty($default_field_id) && $entity_type_id) {
       // @todo Why doesn't user have a default field? Is there another way to get it?
       if ($entity_type_id == 'user') {
-
-        $derivative['replace_values']['__DEFAULT_FIELD_ID'] = 'name';
+        $default_field_id = 'name';
       }
-      else {
-        // Setting to NULL will remove values from template if key is matched.
-        $derivative['replace_values']['__DEFAULT_FIELD_ID'] = NULL;
-      }
-
     }
+    return $default_field_id;
+  }
 
-    // @todo Change permission in View to permission that associated with Entity Type.
-    $this->derivatives[$derivative_id] = $derivative;
+  /**
+   * Return the base field from a View tabel array.
+   *
+   * @param array $table_data
+   *
+   * @return null|string
+   */
+  private function getTableBaseField(array $table_data) {
+    if (!empty($table_data['table']['base']['field'])) {
+      return $table_data['table']['base']['field'];
+    }
+    return NULL;
   }
 
 
