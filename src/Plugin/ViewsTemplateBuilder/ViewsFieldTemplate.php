@@ -19,7 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ViewsBuilder(
  *  id = "calendar_field",
- *  view_template_id = "calendar_field",
  *  module = "calendar",
  *  deriver = "Drupal\calendar\Plugin\Derivative\ViewsFieldTemplate"
  * )
@@ -60,6 +59,8 @@ class ViewsFieldTemplate extends ViewsDuplicateBuilderBase {
       // If entity doesn't have a base field status remove it from View filter.
       unset($view_template['display']['default']['display_options']['filters']['status']);
     }
+    $this->field_manager->getFieldDefinitions($this->getDefinitionValue('entity_type'), 'event');
+    $this->field_manager->getFieldStorageDefinitions('node');
   }
 
 
