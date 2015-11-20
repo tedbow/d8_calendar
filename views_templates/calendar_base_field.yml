@@ -1,9 +1,9 @@
 langcode: en
 status: true
 id: calendar_field
-label: '__TABLE_LABEL __FIELD_LABEL Calendar'
+label: '__ENTITY_LABEL __FIELD_LABEL Calendar'
 module: views
-description: 'A calendar view of the ''__FIELD_LABEL'' field in the ''__TABLE_LABEL'' base table'
+description: 'A calendar view of the ''__FIELD_LABEL'' field in the ''__ENTITY_LABEL'' base table'
 tag: ''
 base_table: __BASE_TABLE
 base_field: __BASE_FIELD
@@ -177,7 +177,7 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: __ENTITY_TYPE
-          entity_field: created
+          entity_field: __DEFAULT_FIELD_ID
           plugin_id: field
       filters:
         status:
@@ -212,10 +212,10 @@ display:
       empty: {  }
       relationships: {  }
       arguments:
-        created_calendar:
-          id: created_calendar
+        __FIELD_ID_calendar:
+          id: __FIELD_ID_calendar
           table: __BASE_TABLE
-          field: created_calendar
+          field: __FIELD_ID_calendar
           relationship: none
           group_type: group
           admin_label: ''
@@ -339,10 +339,10 @@ display:
         context: '0'
         menu_name: main
       arguments:
-        created_calendar:
-          id: created_calendar
+        __FIELD_ID_calendar:
+          id: __FIELD_ID_calendar
           table: __BASE_TABLE
-          field: created_calendar
+          field: __FIELD_ID_calendar
           relationship: none
           group_type: group
           admin_label: ''
@@ -433,10 +433,10 @@ display:
         context: '0'
         menu_name: main
       arguments:
-        created_calendar:
-          id: created_calendar
+        __FIELD_ID_calendar:
+          id: __FIELD_ID_calendar
           table: __BASE_TABLE
-          field: created_calendar
+          field: __FIELD_ID_calendar
           relationship: none
           group_type: group
           admin_label: ''
@@ -517,10 +517,10 @@ display:
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
       arguments:
-        created_calendar:
-          id: created_calendar
+        __FIELD_ID_calendar:
+          id: __FIELD_ID_calendar
           table: __BASE_TABLE
-          field: created_calendar
+          field: __FIELD_ID_calendar
           relationship: none
           group_type: group
           admin_label: ''

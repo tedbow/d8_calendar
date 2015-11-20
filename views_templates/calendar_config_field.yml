@@ -1,9 +1,9 @@
 langcode: en
 status: true
 id: content___FIELD_ID_on_calendar
-label: '__TABLE_LABEL Field __FIELD_LABEL on Calendar'
+label: '__ENTITY_LABEL Field __FIELD_LABEL on Calendar'
 module: views
-description: 'A calendar view of the ''__FIELD_LABEL'' field in the ''__TABLE_LABEL'' base table'
+description: 'A calendar view of the ''__FIELD_LABEL'' field in the ''__ENTITY_LABEL'' base table'
 tag: ''
 base_table: __BASE_TABLE
 base_field: __BASE_FIELD
@@ -134,7 +134,7 @@ display:
           plugin_id: field
         __FIELD_ID:
           id: __FIELD_ID
-          table: __ENTITY_TYPE____FIELD_ID
+          table: __FIELD_TABLE
           field: __FIELD_ID
           relationship: none
           group_type: group
@@ -211,7 +211,7 @@ display:
       sorts:
         __FIELD_ID_value:
           id: __FIELD_ID_value
-          table: __ENTITY_TYPE____FIELD_ID
+          table: __FIELD_TABLE
           field: __FIELD_ID_value
           relationship: none
           group_type: group
@@ -229,7 +229,7 @@ display:
       arguments:
         __FIELD_ID_value_calendar:
           id: __FIELD_ID_value_calendar
-          table: __ENTITY_TYPE____FIELD_ID
+          table: __FIELD_TABLE
           field: __FIELD_ID_value_calendar
           relationship: none
           group_type: group
@@ -357,7 +357,7 @@ display:
       arguments:
         __FIELD_ID_value_calendar:
           id: __FIELD_ID_value_calendar
-          table: __ENTITY_TYPE____FIELD_ID
+          table: __FIELD_TABLE
           field: __FIELD_ID_value_calendar
           relationship: none
           group_type: group
@@ -451,7 +451,7 @@ display:
       arguments:
         __FIELD_ID_value_calendar:
           id: __FIELD_ID_value_calendar
-          table: __ENTITY_TYPE____FIELD_ID
+          table: __FIELD_TABLE
           field: __FIELD_ID_value_calendar
           relationship: none
           group_type: group
@@ -535,7 +535,7 @@ display:
       arguments:
         __FIELD_ID_value_calendar:
           id: __FIELD_ID_value_calendar
-          table: __ENTITY_TYPE____FIELD_ID
+          table: __FIELD_TABLE
           field: __FIELD_ID_value_calendar
           relationship: none
           group_type: group
