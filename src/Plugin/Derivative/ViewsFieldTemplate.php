@@ -222,6 +222,9 @@ class ViewsFieldTemplate implements ContainerDeriverInterface {
       'table' => $field_info['base_table'],
       'base_table' => $field_info['base_table'],
       'view_template_id' => $field_info['view_template_id'],
+        // @todo Find a better token system that works with both keys and values
+        //  Make function prepareReplaceValuesArray
+        // Create a replace key __FIELD_TABLE to avoid this __ENTITY_TYPE____FIELD_ID
       'replace_values' => [
         '__BASE_TABLE' => $field_info['base_table'],
         '__BASE_FIELD' => $field_info['base_field'],
@@ -253,6 +256,7 @@ class ViewsFieldTemplate implements ContainerDeriverInterface {
     $derivative['replace_values']['__DEFAULT_FIELD_ID'] = $default_field_id;
 
     // @todo Change permission in View to permission that associated with Entity Type.
+    // @todo Change context from hardcoded 'user.node_grants:view'
     $this->derivatives[$derivative_id] = $derivative;
   }
 
