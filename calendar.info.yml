@@ -2,6 +2,7 @@ name: Calendar
 type: module
 description: 'Views plugin to display views containing dates as Calendars.'
 dependencies:
+  - calendar_datetime
   - views
   - views_templates
 package: Date/Time
