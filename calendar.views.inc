@@ -18,7 +18,7 @@ function calendar_views_data_alter(array &$data) {
           'title' => t('Calendar contextual filter for @name', ['@name' => $property_name,]),
           'help' => t('A calendar contextual filter that handles granularity and range options.'),
           'argument' => [
-            'field' => $property_name . '_calendar',
+            'field' => $property_name,
             'id' => 'calendar_datetime',
           ],
         ];
