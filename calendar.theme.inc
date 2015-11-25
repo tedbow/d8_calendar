@@ -162,8 +162,8 @@ function template_preprocess_calendar_day(&$vars) {
     // @FIXME
 // The Assets API has totally changed. CSS, JavaScript, and libraries are now
 // attached directly to render arrays using the #attached property.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/2169605
 // @see https://www.drupal.org/node/2408597
 // drupal_add_css(drupal_get_path('module', 'calendar') . '/css/calendar-overlap.css');
@@ -172,8 +172,8 @@ function template_preprocess_calendar_day(&$vars) {
       // @FIXME
 // The Assets API has totally changed. CSS, JavaScript, and libraries are now
 // attached directly to render arrays using the #attached property.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/2169605
 // @see https://www.drupal.org/node/2408597
 // drupal_add_css(drupal_get_path('module', 'calendar') . '/css/calendar-overlap-no-scroll.css');
@@ -405,8 +405,8 @@ function template_preprocess_calendar_week(&$vars) {
     // @FIXME
 // The Assets API has totally changed. CSS, JavaScript, and libraries are now
 // attached directly to render arrays using the #attached property.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/2169605
 // @see https://www.drupal.org/node/2408597
 // drupal_add_css(drupal_get_path('module', 'calendar') . '/css/calendar-overlap.css');
@@ -415,8 +415,8 @@ function template_preprocess_calendar_week(&$vars) {
       // @FIXME
 // The Assets API has totally changed. CSS, JavaScript, and libraries are now
 // attached directly to render arrays using the #attached property.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/2169605
 // @see https://www.drupal.org/node/2408597
 // drupal_add_css(drupal_get_path('module', 'calendar') . '/css/calendar-overlap-no-scroll.css');
@@ -607,13 +607,15 @@ function template_preprocess_calendar_item(&$vars) {
   if (!empty($item->getRenderedFields()) && empty($item->getIsMultiDay())) {
     $vars['rendered_fields'] = array($item->getRenderedFields());
   }
-  else {
-    foreach ($vars['view']->field as $id => $field) {
-      if ($field->options['exclude'] || (!empty($item->getIsMultiDay()) && in_array($id, $multiday_hidden))) {
-        unset($vars['rendered_fields'][$field->field]);
-      }
+  foreach ($vars['view']->field as $id => $field) {
+    foreach ($vars['rendered_fields'] as $index => &$render_array) {
+
+    }
+    if ($field->options['exclude'] || (!empty($item->getIsMultiDay()) && in_array($id, $multiday_hidden))) {
+      unset($render_array[$field->field]);
     }
   }
+
 }
 
 /**

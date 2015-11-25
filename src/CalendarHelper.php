@@ -8,9 +8,11 @@ namespace Drupal\calendar;
 use Datetime;
 use DateTimeZone;
 use Drupal\Core\Datetime\DateHelper;
+use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Drupal\views\Plugin\views\filter\Broken;
 use Drupal\views\Views;
 use Drupal\Component\Utility\Unicode;
+use Drupal\views\Plugin\views\argument\Date as ViewsDateArg;
 
 /**
  * Defines Gregorian Calendar date values.
@@ -677,5 +679,16 @@ class CalendarHelper extends DateHelper {
     }
     return $all_fields;
 //    return array();
+  }
+
+  /**
+   * Argument can be used as calendar argument.
+   *
+   * @param \Drupal\views\Plugin\views\argument\ArgumentPluginBase $arg
+   *
+   * @return bool
+   */
+  public static function isCalendarArgument(ArgumentPluginBase $arg) {
+    return $arg instanceof ViewsDateArg;
   }
 }

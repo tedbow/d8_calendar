@@ -28,6 +28,7 @@
  * evenly over the remaining 90% of the table.
  */
 #}
+<h1>h1</h1>
 <div class="calendar-calendar"><div class="day-view">
 <table class="full">
   <col width="{{ first_column_width }}%"></col>
@@ -47,6 +48,7 @@
     </tr>
   </thead>
   <tbody>
+    {#
     <tr>
       <td class="{{ agenda_hour_class }}">
          <span class="calendar-hour">
@@ -69,6 +71,7 @@
        </td>
       {% endfor %}
     </tr>
+    #}
     {% for hour in rows['items'] %}
     <tr>
       <td class="calendar-agenda-hour">

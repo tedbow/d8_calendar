@@ -426,7 +426,7 @@ class Calendar extends StylePluginBase {
   protected function dateArgumentHandler() {
     $current_position = 0;
     foreach ($this->view->argument as $name => $handler) {
-      if (is_subclass_of($handler, '\Drupal\datetime\Plugin\views\argument\Date')) {
+      if (CalendarHelper::isCalendarArgument($handler)) {
         $this->dateInfo->setDateArgumentPosition($current_position);
         return $handler;
       }
@@ -455,7 +455,7 @@ class Calendar extends StylePluginBase {
       case 'datetime_year':
         $default_granularity = 'year';
         break;
-      // @todo Handle weekd
+      // @todo Handle week
       default:
         $default_granularity = 'month';
 
@@ -577,12 +577,12 @@ class Calendar extends StylePluginBase {
       $this->view->row_index = $row_index;
       $events = $this->view->rowPlugin->render($row);
       // @todo Check what comes out here.
-      /** @var \Drupal\calendar\CalendarEvent $event */
+      /** @var \Drupal\calendar\CalendarEvent $event_info */
       foreach ($events as $event_info) {
 //        $event->granularity = $this->dateInfo->granularity;
-        $item_start = $this->dateFormatter->format($event_info->getStartDate()->getTimestamp(), 'custom', 'Y-m-d');
-        $item_end = $this->dateFormatter->format($event_info->getEndDate()->getTimestamp(), 'custom', 'Y-m-d');
-        $time_start = $this->dateFormatter->format($event_info->getStartDate()->getTimestamp(), 'custom', 'H:i:s');
+        $item_start = $event_info->getStartDate()->format('Y-m-d');
+        $item_end = $event_info->getEndDate()->format('Y-m-d');
+        $time_start = $event_info->getStartDate()->format('H:i:s');
         $event_info->setRenderedFields($this->rendered_fields[$row_index]);
         $items[$item_start][$time_start][] = $event_info;
       }
@@ -648,8 +648,13 @@ class Calendar extends StylePluginBase {
       if ($arg_date = \DateTime::createFromFormat($argument->getArgFormat(), $argument->getValue())) {
         $argument->min_date = clone $arg_date;
         $argument->max_date = clone $arg_date;
-        $argument->min_date->modify("first day of this $granularity");
-        $argument->max_date->modify("last day of this $granularity");
+        if ($granularity != 'day') {
+          $argument->min_date->modify("first day of this $granularity");
+          $argument->max_date->modify("last day of this $granularity");
+        }
+        $argument->min_date->setTime(0,0,0);
+        $argument->max_date->setTime(23,59,59);
+
       }
     }
   }
@@ -804,13 +809,19 @@ class Calendar extends StylePluginBase {
               }
               else {
                 // todo fix this since $event['entry'] is a render array now.
-                $single_days = '';
-//                foreach ($singleday_buckets[$week_day] as $day) {
-//                  foreach ($day as $event) {
-//                    $single_day_count++;
-//                    $single_days .= (isset($event['more_link'])) ? '<div class="calendar-more">' . $event['entry'] . '</div>' : $event['entry'];
-//                  }
-//                }
+                $single_days = [];
+                foreach ($singleday_buckets[$week_day] as $day) {
+                  foreach ($day as $event) {
+                    $single_day_count++;
+                    if (isset($event['more_link'])) {
+                      // @todo more logic
+                    }
+                    else {
+                      $single_days = $event['entry'];
+                    }
+                    //$single_days .= (isset($event['more_link'])) ? '<div class="calendar-more">' . $event['entry'] . '</div>' : $event['entry'];
+                  }
+                }
                 $class = 'single-day';
               }
 

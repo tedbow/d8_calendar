@@ -9,7 +9,7 @@ namespace Drupal\calendar_datetime\Plugin\views\argument;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Plugin\views\argument\Formula;
-use Drupal\datetime\Plugin\views\Argument\Date as CoreDate;
+use Drupal\views\Plugin\views\Argument\Date as CoreDate;
 
 /**
  * Abstract argument handler for dates.

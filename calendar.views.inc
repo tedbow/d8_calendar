@@ -56,6 +56,7 @@ function _calendar_create_field_arguments($field_id, $group = '') {
     'month' => t('Date in the form of MM (01 - 12).'),
     'year_month' => t('Date in the form of YYYYMM.'),
     'full_date' => t('Date in the form of CCYYMMDD.'),
+    'year_week' => t('Date in the form of YYYYW'),
   ];
   foreach ($granularity_types as $granularity_type => $granularity_label) {
 

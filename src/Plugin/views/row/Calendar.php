@@ -9,6 +9,7 @@ namespace Drupal\calendar\Plugin\views\row;
 
 use Drupal\calendar\CalendarEvent;
 use Drupal\calendar\CalendarHelper;
+use Drupal\calendar\DateFieldWrapper;
 use Drupal\calendar_datetime\Plugin\views\argument\Date;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\Entity;
@@ -328,7 +329,7 @@ class Calendar extends RowPluginBase {
     foreach ($this->view->getDisplay()->getHandlers('argument') as $handler) {
       if ($handler instanceof Date) {
         // Strip "_calendar" from the field name.
-        $fieldName = str_replace('_calendar', '', $handler->field);
+        $fieldName = $handler->realField;
         $date_fields[$fieldName] = $data['alias'][$handler->table . '_' . $fieldName];
 
         $this->dateArgument = $handler;
@@ -410,18 +411,18 @@ class Calendar extends RowPluginBase {
           $entity->date_id = ['calendar.' . $id . '.' . $field_name . '.' . $delta];
         }
 
-        /** @var \Drupal\Core\Field\FieldItemList $field */
-        $field = $entity->getFields()[$field_name];
+
+        $fieldWrapper = new DateFieldWrapper($entity->getFields()[$field_name]);
 //        $items = field_get_items($this->entity_type, $entity, $field_name, $this->language);
 //        $item  = $items[$delta];
 //        $db_tz   = date_get_timezone_db($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
 //        $to_zone = date_get_timezone($tz_handling, isset($item->$tz_field)) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone());
-        if (!empty($field->getValue())) {
+
+        if (!$fieldWrapper->isEmpty()) {
 //          $item_start_date = new dateObject($item['value'], $db_tz);
-          $item_start_date = new \DateTime();
-          $item_start_date->setTimestamp($field->getValue()[0]['value']);
+          $item_start_date = $fieldWrapper->getStartDate();
 //          $item_end_date   = array_key_exists('value2', $item) ? new dateObject($item['value2'], $db_tz) : $item_start_date;
-          $item_end_date   = $item_start_date;
+          $item_end_date   = $fieldWrapper->getEndDate();
         }
 
 //        $cck_field = field_info_field($field_name);
@@ -494,17 +495,17 @@ class Calendar extends RowPluginBase {
 //       ));
 
 
-      $entities = $this->explode_values($event);
-      foreach ($entities as $entity) {
+      $events = $this->explode_values($event);
+      foreach ($events as $event) {
         switch ($this->options['colors']['legend']) {
           case 'type':
-            $this->nodeTypeStripe($entity);
+            $this->nodeTypeStripe($event);
             break;
           case 'taxonomy':
-            $this->calendar_taxonomy_stripe($entity);
+            $this->calendar_taxonomy_stripe($event);
             break;
         }
-        $rows[] = $entity;
+        $rows[] = $event;
       }
     }
 
@@ -535,8 +536,8 @@ class Calendar extends RowPluginBase {
     // @TODO make this work with the CalendarDateInfo object
 //    $now = max($dateInfo->min_zone_string, $this->dateFormatter->format($event->getStartDate()->getTimestamp(), 'Y-m-d'));
 //    $to = min($dateInfo->max_zone_string, $this->dateFormatter->format($event->getEndDate()->getTimestamp(), 'Y-m-d'));
-    $now = $this->dateFormatter->format($event->getStartDate()->getTimestamp(), 'Y-m-d');
-    $to = $this->dateFormatter->format($event->getEndDate()->getTimestamp(), 'Y-m-d');
+    $now = $event->getStartDate()->format('Y-m-d');
+    $to = $event->getEndDate()->format('Y-m-d');
     $next = new \DateTime();
     $next->setTimestamp($event->getStartDate()->getTimestamp());
 
