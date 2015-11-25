@@ -9,7 +9,7 @@ namespace Drupal\calendar\Plugin\views\row;
 
 use Drupal\calendar\CalendarEvent;
 use Drupal\calendar\CalendarHelper;
-use Drupal\calendar\Plugin\views\argument\CalendarDate;
+use Drupal\calendar_datetime\Plugin\views\argument\Date;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Form\FormStateInterface;
@@ -326,7 +326,7 @@ class Calendar extends RowPluginBase {
     $date_fields = [];
     /** @var $handler \Drupal\views\Plugin\views\argument\Formula */
     foreach ($this->view->getDisplay()->getHandlers('argument') as $handler) {
-      if ($handler instanceof CalendarDate) {
+      if ($handler instanceof Date) {
         // Strip "_calendar" from the field name.
         $fieldName = str_replace('_calendar', '', $handler->field);
         $date_fields[$fieldName] = $data['alias'][$handler->table . '_' . $fieldName];
@@ -482,7 +482,7 @@ class Calendar extends RowPluginBase {
 // Calling _theme() directly can alter the expected output and potentially
 // introduce security issues (see https://www.drupal.org/node/2195739). You
 // should use renderable arrays instead.
-// 
+//
 //
 // @see https://www.drupal.org/node/2195739
 // $event->rendered = theme($this->theme_functions(),

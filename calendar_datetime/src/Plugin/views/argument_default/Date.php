@@ -19,8 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
  * @ingroup views_argument_default_plugins
  *
  * @ViewsArgumentDefault(
- *   id = "date",
- *   title = @Translation("Current date")
+ *   id = "calendar_date",
+ *   title = @Translation("Calendar Current date")
  * )
  */
 class Date extends ArgumentDefaultPluginBase implements CacheableDependencyInterface {

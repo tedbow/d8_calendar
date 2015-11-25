@@ -2,13 +2,14 @@
 
 /**
  * @file
- * Contains \Drupal\views\Plugin\views\argument\Date.
+ * Contains \Drupal\calendar_datetime\Plugin\views\argument\Date.
  */
 
 namespace Drupal\calendar_datetime\Plugin\views\argument;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Plugin\views\argument\Formula;
+use Drupal\datetime\Plugin\views\Argument\Date as CoreDate;
 
 /**
  * Abstract argument handler for dates.
@@ -24,9 +25,9 @@ use Drupal\views\Plugin\views\argument\Formula;
  *
  * @ingroup views_argument_handlers
  *
- * @ViewsArgument("date")
+ * @ViewsArgument("calendar_date")
  */
-class Date extends Formula implements ContainerFactoryPluginInterface {
+class Date extends CoreDate implements ContainerFactoryPluginInterface {
 
   /**
    * The date format used in the title.
