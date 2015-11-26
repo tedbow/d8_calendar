@@ -10,7 +10,7 @@ namespace Drupal\calendar\Plugin\views\row;
 use Drupal\calendar\CalendarEvent;
 use Drupal\calendar\CalendarHelper;
 use Drupal\calendar\DateFieldWrapper;
-use Drupal\calendar_datetime\Plugin\views\argument\Date;
+use Drupal\views\Plugin\views\argument\Date;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Form\FormStateInterface;
@@ -412,18 +412,24 @@ class Calendar extends RowPluginBase {
         }
 
 
-        $fieldWrapper = new DateFieldWrapper($entity->getFields()[$field_name]);
+        $fields = $entity->getFields();
+        // Should CalendarHelper::dateViewFields() be returning this already
+        $entity_field_name = str_replace('_value', '',$field_name);
+        if (isset($fields[$entity_field_name])) {
+          $fieldWrapper = new DateFieldWrapper($fields[$entity_field_name]);
 //        $items = field_get_items($this->entity_type, $entity, $field_name, $this->language);
 //        $item  = $items[$delta];
 //        $db_tz   = date_get_timezone_db($tz_handling, isset($item->$tz_field) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone()));
 //        $to_zone = date_get_timezone($tz_handling, isset($item->$tz_field)) ? $item->$tz_field : timezone_name_get($dateInfo->getTimezone());
 
-        if (!$fieldWrapper->isEmpty()) {
+          if (!$fieldWrapper->isEmpty()) {
 //          $item_start_date = new dateObject($item['value'], $db_tz);
-          $item_start_date = $fieldWrapper->getStartDate();
+            $item_start_date = $fieldWrapper->getStartDate();
 //          $item_end_date   = array_key_exists('value2', $item) ? new dateObject($item['value2'], $db_tz) : $item_start_date;
-          $item_end_date   = $fieldWrapper->getEndDate();
+            $item_end_date   = $fieldWrapper->getEndDate();
+          }
         }
+
 
 //        $cck_field = field_info_field($field_name);
 //        $instance = field_info_instance($this->entity_type, $field_name, $this->type);

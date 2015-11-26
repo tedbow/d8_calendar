@@ -246,10 +246,10 @@ display:
         description: ''
         weight: 0
       arguments:
-        __FIELD_ID_calendar_year_month:
-          id: __FIELD_ID_calendar_year_month
+        __FIELD_ID_year_month:
+          id: __FIELD_ID_year_month
           table: __BASE_TABLE
-          field: __FIELD_ID_calendar_year_month
+          field: __FIELD_ID_year_month
           relationship: none
           group_type: group
           admin_label: ''
@@ -258,9 +258,9 @@ display:
             value: all
             title_enable: false
             title: All
-          title_enable: true
-          title: '{{ arguments.__FIELD_ID_calendar_year_month }}'
-          default_argument_type: calendar_date
+          title_enable: false
+          title: ''
+          default_argument_type: date
           default_argument_options: {  }
           default_argument_skip_url: false
           summary_options:
@@ -278,7 +278,7 @@ display:
             fail: 'not found'
           validate_options: {  }
           entity_type: __ENTITY_TYPE
-          plugin_id: datetime_year_month
+          plugin_id: date_year_month
       defaults:
         arguments: false
     cache_metadata:
@@ -290,9 +290,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  page_2:
+  page_week:
     display_plugin: page
-    id: page_2
+    id: page_week
     display_title: Week
     position: 2
     display_options:
@@ -429,10 +429,10 @@ display:
         context: '0'
         menu_name: main
       arguments:
-         __FIELD_ID_calendar_full_date:
-          id:  __FIELD_ID_calendar_full_date
+         __FIELD_ID__fulldate:
+          id:  __FIELD_ID_fulldate
           table: __BASE_TABLE
-          field:  __FIELD_ID_calendar_full_date
+          field:  __FIELD_ID_fulldate
           relationship: none
           group_type: group
           admin_label: ''
@@ -443,7 +443,7 @@ display:
             title: All
           title_enable: false
           title: ''
-          default_argument_type: calendar_date
+          default_argument_type: date
           default_argument_options: {  }
           default_argument_skip_url: false
           summary_options:
@@ -461,7 +461,7 @@ display:
             fail: 'not found'
           validate_options: {  }
           entity_type: __ENTITY_TYPE
-          plugin_id: datetime_full_date
+          plugin_id: date_fulldate
     cache_metadata:
       max-age: -1
       contexts:
@@ -509,10 +509,10 @@ display:
             taxonomy_field: ''
             calendar_colors_vocabulary: {  }
       arguments:
-        __FIELD_ID_calendar_year:
-          id: __FIELD_ID_calendar_year
+        __FIELD_ID_year:
+          id: __FIELD_ID_year
           table: __BASE_TABLE
-          field: __FIELD_ID_calendar_year
+          field: __FIELD_ID_year
           relationship: none
           group_type: group
           admin_label: ''
@@ -523,7 +523,7 @@ display:
             title: All
           title_enable: false
           title: ''
-          default_argument_type: calendar_date
+          default_argument_type: date
           default_argument_options: {  }
           default_argument_skip_url: false
           summary_options:
@@ -541,7 +541,7 @@ display:
             fail: 'not found'
           validate_options: {  }
           entity_type: __ENTITY_TYPE
-          plugin_id: datetime_year
+          plugin_id: date_year
       path: __BASE_PATH/year
       menu:
         type: tab

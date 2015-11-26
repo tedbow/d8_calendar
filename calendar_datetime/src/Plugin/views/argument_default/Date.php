@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @ingroup views_argument_default_plugins
  *
  * @ViewsArgumentDefault(
- *   id = "calendar_date",
+ *   id = "date",
  *   title = @Translation("Calendar Current date")
  * )
  */
