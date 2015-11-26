@@ -86,19 +86,26 @@ class DateArgumentWrapper {
 
   public function createDateTime() {
     if ($value = $this->dateArg->getValue()) {
-      $format = $this->getArgFormat();
-      if ($format == 'YW') {
-        $date = new \DateTime();
-        $year = (int)substr($value, 0, 4);
-        $month = (int)substr($value, 4, 2);
-        $date->setISODate($year, $month);
-        return $date;
+      if (!$this->validateValue($value)) {
+        return FALSE;
       }
-      else {
-        return \DateTime::createFromFormat($this->getArgFormat(), $value);
-      }
+      return $this->createFromFormat($value);
     }
     return NULL;
+  }
+
+  protected function createFromFormat($value) {
+    $format = $this->getArgFormat();
+    if ($format == 'YW') {
+      $date = new \DateTime();
+      $year = (int)substr($value, 0, 4);
+      $month = (int)substr($value, 4, 2);
+      $date->setISODate($year, $month);
+    }
+    else {
+      $date =  \DateTime::createFromFormat($this->getArgFormat(), $value);
+    }
+    return $date;
   }
 
   public function format($format) {
@@ -174,4 +181,35 @@ class DateArgumentWrapper {
     return $this->max_date;
   }
 
+  /**
+   * Check if a string value is valid for this format.
+   *
+   * \DateTime::createFromFormat will not throw an error but try to make a date
+   * \DateTime::getLastErrors() is also not reliable.
+   *
+   * @param string $value
+   *
+   * @return bool
+   */
+  public function validateValue($value)
+  {
+    if ($this->getArgFormat() == 'YW') {
+      $info = $this->getYearWeek($value);
+      return $info['week'] >= 1 && $info['week'] <= 52;
+    }
+    else {
+      $created_date = $this->createFromFormat($value);
+      return $created_date && $created_date->format($this->getArgFormat()) == $value;
+    }
+
+  }
+
+  protected function getYearWeek($value) {
+    if (is_numeric($value) && strlen($value) == 6) {
+      $return['year'] = (int)substr($value, 0, 4);
+      $return['week'] = (int)substr($value, 4, 2);
+      return $return;
+    }
+    return FALSE;
+  }
 }
