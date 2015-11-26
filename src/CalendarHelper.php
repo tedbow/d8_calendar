@@ -703,18 +703,20 @@ class CalendarHelper extends DateHelper {
    *   Returns the Date handler if one is found, or FALSE otherwise.
    */
   public static function getDateArgumentHandler(ViewExecutable $view) {
-    $current_position = 0;
-    /**
-     * @var  $name
-     * @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $handler
-     */
-    foreach ($view->argument as $name => $handler) {
-      if (static::isCalendarArgument($handler)) {
-        $wrapper = new DateArgumentWrapper($handler);
-        $wrapper->setPosition($current_position);
-        return $wrapper;
+    if ($view->argument) {
+      $current_position = 0;
+      /**
+       * @var  $name
+       * @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $handler
+       */
+      foreach ($view->argument as $name => $handler) {
+        if (static::isCalendarArgument($handler)) {
+          $wrapper = new DateArgumentWrapper($handler);
+          $wrapper->setPosition($current_position);
+          return $wrapper;
+        }
+        $current_position++;
       }
-      $current_position++;
     }
     return FALSE;
   }
