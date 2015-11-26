@@ -28,7 +28,6 @@
  * evenly over the remaining 90% of the table.
  */
 #}
-<h1>h1</h1>
 <div class="calendar-calendar"><div class="day-view">
 <table class="full">
   <col width="{{ first_column_width }}%"></col>
@@ -48,7 +47,7 @@
     </tr>
   </thead>
   <tbody>
-    {#
+    {# // All day and multi-day events not support in core DateTime module in Drupal 8
     <tr>
       <td class="{{ agenda_hour_class }}">
          <span class="calendar-hour">
