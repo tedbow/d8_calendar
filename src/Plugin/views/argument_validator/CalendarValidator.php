@@ -12,8 +12,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Drupal\views\Plugin\views\argument\Date;
 use Drupal\views\Plugin\views\argument_validator\ArgumentValidatorPluginBase;
-use Drupal\views\Plugin\views\display\DisplayPluginBase;
-use Drupal\views\ViewExecutable;
 
 /**
  * Defines a argument validator plugin for Date arguments used in Calendar.
@@ -34,9 +32,12 @@ class CalendarValidator extends ArgumentValidatorPluginBase {
    * {@inheritdoc}
    */
   public function validateArgument($arg) {
-    if ( isset($this->argument_wrapper)
-      && $this->argument_wrapper->validateValue($arg)) {
+    if (isset($this->argument_wrapper)
+      && $this->argument_wrapper->validateValue($arg)
+    ) {
       $date = $this->argument_wrapper->createDateTime();
+      // Override title for substitutions
+      // @see \Drupal\views\Plugin\views\argument\ArgumentPluginBase::getTitle
       $this->argument->validated_title = $date->format($this->options['replacement_format']);
       return TRUE;
     }
@@ -96,7 +97,6 @@ class CalendarValidator extends ArgumentValidatorPluginBase {
     ];
     return $form;
   }
-
 
 
 }
