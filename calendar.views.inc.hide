@@ -10,7 +10,7 @@ use Drupal\field\FieldStorageConfigInterface;
 /**
  * Implements hook_views_data_alter().
  */
-function calendar_views_data_alter(array &$data) {
+function calendar_views_data_alterx(array &$data) {
   foreach ($data as $table_name => $table_data) {
     foreach ($table_data as $property_name => $properties) {
       if (isset($properties['argument']) && $properties['argument']['id'] === 'date') {

@@ -10,7 +10,8 @@ namespace Drupal\calendar\Plugin\views\style;
 use Drupal\calendar\CalendarDateInfo;
 use Drupal\calendar\CalendarHelper;
 use Drupal\calendar\CalendarStyleInfo;
-use Drupal\calendar_datetime\Plugin\views\argument\Date;
+use Drupal\calendar\DateArgumentWrapper;
+use Drupal\views\Plugin\views\argument\Date;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\calendar\Plugin\views\row\Calendar as CalendarRow;
 use Drupal\Core\Form\FormStateInterface;
@@ -420,7 +421,7 @@ class Calendar extends StylePluginBase {
    * This function also sets the date argument position into the $dateInfo
    * object.
    *
-   * @return Date|FALSE
+   * @return DateArgumentWrapper|FALSE
    *   Returns the Date handler if one is found, or FALSE otherwise.
    */
   protected function dateArgumentHandler() {
@@ -428,57 +429,11 @@ class Calendar extends StylePluginBase {
     foreach ($this->view->argument as $name => $handler) {
       if (CalendarHelper::isCalendarArgument($handler)) {
         $this->dateInfo->setDateArgumentPosition($current_position);
-        return $handler;
+        return new DateArgumentWrapper($handler);
       }
       $current_position++;
     }
     return FALSE;
-  }
-
-  /**
-   * Inspect argument information to see which calendar period we should show.
-   *
-   * @return string $view_granularity
-   *   The granularity for the current view. Defaults to "month".
-   */
-  protected function granularity() {
-    if (!$handler = $this->dateArgumentHandler()) {
-      return 'month';
-    }
-    switch ($handler->getPluginId()) {
-      case 'datetime_year_month':
-        $default_granularity = 'month';
-        break;
-      case 'datetime_full_date':
-        $default_granularity = 'day';
-        break;
-      case 'datetime_year':
-        $default_granularity = 'year';
-        break;
-      // @todo Handle week
-      default:
-        $default_granularity = 'month';
-
-    }
-    return $default_granularity;
-    /*
-    @todo Assess if any of this logic is needed.
-    $default_granularity = !empty($handler->options['calendar']['granularity']) ? $handler->options['calendar']['granularity'] : 'month';
-    $argument = $handler->argument;
-
-    $view_granularity = $default_granularity;
-    return $view_granularity;
-    // @todo not sure why below is necessary since we already have $view_granularity
-    if (!empty($argument)) {
-      // @todo implement
-      module_load_include('inc', 'date_api', 'date_api_sql');
-      $handler->getDefaultArgument();
-      $date_handler = new date_sql_handler();
-      $view_granularity = $date_handler->arg_granularity($argument);
-    }
-
-    return $view_granularity;
-    */
   }
 
   /**
@@ -511,27 +466,26 @@ class Calendar extends StylePluginBase {
 //      return;
 //    }
 
-    $this->setArgumentRange($argument);
    // $argument->min_date = new \DateTime('0 months');
     //$argument->max_date = new \DateTime('+3 months');
 
     // Add information from the date argument to the view.
-    $this->dateInfo->setGranularity($this->granularity());
+    $this->dateInfo->setGranularity($argument->getGranularity());
     $this->dateInfo->setCalendarType($this->options['calendar_type']);
-    $this->dateInfo->setDateArgument($argument);
-    $this->dateInfo->setMinYear($this->dateFormatter->format($argument->min_date->getTimestamp(), 'custom', 'Y'));
-    $this->dateInfo->setMinMonth($this->dateFormatter->format($argument->min_date->getTimestamp(), 'custom', 'n'));
-    $this->dateInfo->setMinDay($this->dateFormatter->format($argument->min_date->getTimestamp(), 'custom', 'j'));
+    $this->dateInfo->setDateArgument($argument->getDateArg());
+    $this->dateInfo->setMinYear($argument->getMinDate()->format('Y'));
+    $this->dateInfo->setMinMonth($argument->getMinDate()->format('n'));
+    $this->dateInfo->setMinDay($argument->getMinDate()->format('j'));
     // @todo We shouldn't use DATETIME_DATE_STORAGE_FORMAT.
-    $this->dateInfo->setMinWeek(CalendarHelper::dateWeek(date_format($argument->min_date, DATETIME_DATE_STORAGE_FORMAT)));
-    $this->dateInfo->setRange($argument->options['calendar']['date_range']);
-    $this->dateInfo->setMinDate($argument->min_date);
-    $this->dateInfo->setMaxDate($argument->max_date);
+    $this->dateInfo->setMinWeek(CalendarHelper::dateWeek(date_format($argument->getMinDate(), DATETIME_DATE_STORAGE_FORMAT)));
+    //$this->dateInfo->setRange($argument->options['calendar']['date_range']);
+    $this->dateInfo->setMinDate($argument->getMinDate());
+    $this->dateInfo->setMaxDate($argument->getMaxDate());
     // @todo implement limit
 //    $this->dateInfo->limit = $argument->limit;
     // @todo What if the display doesn't have a route?
     //$this->dateInfo->url = $this->view->getUrl();
-    $this->dateInfo->setForbid(isset($argument->forbid) ? $argument->forbid : FALSE);
+    $this->dateInfo->setForbid(isset($argument->getDateArg()->forbid) ? $argument->getDateArg()->forbid : FALSE);
 
     // Add calendar style information to the view.
     $this->styleInfo->setCalendarPopup($this->displayHandler->getOption('calendar_popup'));
@@ -642,22 +596,6 @@ class Calendar extends StylePluginBase {
     return $output;
   }
 
-  protected function setArgumentRange(Date &$argument) {
-    $granularity = $this->granularity();
-    if ($arg_value = $argument->getValue()) {
-      if ($arg_date = \DateTime::createFromFormat($argument->getArgFormat(), $argument->getValue())) {
-        $argument->min_date = clone $arg_date;
-        $argument->max_date = clone $arg_date;
-        if ($granularity != 'day') {
-          $argument->min_date->modify("first day of this $granularity");
-          $argument->max_date->modify("last day of this $granularity");
-        }
-        $argument->min_date->setTime(0,0,0);
-        $argument->max_date->setTime(23,59,59);
-
-      }
-    }
-  }
   /**
    * Build one month.
    */

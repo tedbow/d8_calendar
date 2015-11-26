@@ -45,7 +45,13 @@ class DateFieldWrapper {
    * @return int
    */
   protected function getStartTimeStamp() {
-    return (int)$this->fieldItemList->getValue()[0]['value'];
+    $value = $this->fieldItemList->getValue()[0]['value'];
+    $field_def = $this->fieldItemList->getFieldDefinition();
+    $field_type = $field_def->getFieldStorageDefinition()->getType();
+    if ($field_type == 'datetime') {
+      return strtotime($value);
+    }
+    return (int)$value;
   }
 
   /**
