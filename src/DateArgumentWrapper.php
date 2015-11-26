@@ -28,6 +28,25 @@ class DateArgumentWrapper {
   protected $max_date;
 
   /**
+   * @var int
+   */
+  protected $position;
+
+  /**
+   * @return int
+   */
+  public function getPosition() {
+    return $this->position;
+  }
+
+  /**
+   * @param int $position
+   */
+  public function setPosition($position) {
+    $this->position = $position;
+  }
+
+  /**
    * @return Date
    */
   public function getDateArg() {
@@ -49,7 +68,7 @@ class DateArgumentWrapper {
    *
    * @return string
    */
-  protected function getArgFormat() {
+  public function getArgFormat() {
     $class = get_class($this->dateArg);
     if (stripos($class, 'YearMonthDate') !== FALSE) {
       return 'Ym';

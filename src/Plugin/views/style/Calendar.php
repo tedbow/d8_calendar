@@ -416,27 +416,6 @@ class Calendar extends StylePluginBase {
   }
 
   /**
-   * Helper function to find the first date argument handler for this view.
-   *
-   * This function also sets the date argument position into the $dateInfo
-   * object.
-   *
-   * @return DateArgumentWrapper|FALSE
-   *   Returns the Date handler if one is found, or FALSE otherwise.
-   */
-  protected function dateArgumentHandler() {
-    $current_position = 0;
-    foreach ($this->view->argument as $name => $handler) {
-      if (CalendarHelper::isCalendarArgument($handler)) {
-        $this->dateInfo->setDateArgumentPosition($current_position);
-        return new DateArgumentWrapper($handler);
-      }
-      $current_position++;
-    }
-    return FALSE;
-  }
-
-  /**
    * Checks if this view uses the calendar row plugin.
    *
    * @return boolean
@@ -454,7 +433,7 @@ class Calendar extends StylePluginBase {
       debug('\Drupal\calendar\Plugin\views\style\CalendarStyle: The calendar row plugin is required when using the calendar style, but it is missing.');
       return;
     }
-    if (!$argument = $this->dateArgumentHandler()) {
+    if (!$argument = CalendarHelper::getDateArgumentHandler($this->view)) {
       debug('\Drupal\calendar\Plugin\views\style\CalendarStyle: A calendar date argument is required when using the calendar style, but it is missing or is not using the default date.');
       return;
     }

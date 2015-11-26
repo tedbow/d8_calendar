@@ -1,0 +1,152 @@
+<?php
+/**
+ * @file
+ * Contains \Drupal\calendar\Plugin\views\pager\CalendarPager.
+ */
+
+
+namespace Drupal\calendar\Plugin\views\pager;
+
+
+use Drupal\calendar\CalendarHelper;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\display\DisplayPluginBase;
+use Drupal\views\Plugin\views\pager\PagerPluginBase;
+use Drupal\views\ViewExecutable;
+
+/**
+ * The plugin to handle calendar pager.
+ *
+ * @ingroup views_pager_plugins
+ *
+ * @ViewsPager(
+ *   id = "calendar",
+ *   title = @Translation("Calendar Pager"),
+ *   short_title = @Translation("Calendar"),
+ *   help = @Translation("Calendar Pager"),
+ *   theme = "calendar_pager",
+ *   register_theme = FALSE
+ * )
+ */
+class CalendarPager extends PagerPluginBase {
+
+  const NEXT = '+';
+  const PREVIOUS = '-';
+  /**
+   * @var \Drupal\calendar\DateArgumentWrapper;
+   */
+  protected $argument;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+    parent::init($view, $display, $options);
+    $this->argument = CalendarHelper::getDateArgumentHandler($this->view);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function render($input) {
+    $items['previous'] = [
+      'href' => $this->getPagerHref($this::PREVIOUS),
+    ];
+    $items['next'] = [
+      'href' => $this->getPagerHref($this::NEXT),
+    ];
+    return array(
+      '#theme' => $this->themeFunctions(),
+      '#items' => $items,
+    );
+  }
+
+  /**
+   * Get the date argument value for the pager link.
+   *
+   * @param $mode
+   *  Either '-' or '+' to determine which direction.
+   *
+   * @return string
+   */
+  protected function getPagerArgValue($mode) {
+    $datetime = $this->argument->createDateTime();
+    $datetime->modify($mode . '1 ' . $this->argument->getGranularity());
+    return $datetime->format($this->argument->getArgFormat());
+  }
+
+  /**
+   * Get the href value for the pager link.
+   *
+   * @param $mode
+   *  Either '-' or '+' to determine which direction.
+   *
+   * @return string
+   */
+  protected function getPagerHref($mode) {
+    $value = $this->getPagerArgValue($mode);
+    $base_path = $this->view->getPath();
+    $current_position = 0;
+    $arg_vals = [];
+    /**
+     * @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $handler
+     */
+    foreach ($this->view->argument as $name => $handler) {
+      if ($current_position != $this->argument->getPosition()) {
+        $arg_vals[$current_position] = $handler->getValue();
+      }
+      else {
+        $arg_vals[$current_position] = $value;
+      }
+      $current_position++;
+    }
+    return '/' . $base_path . '/' . implode('/', $arg_vals);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+    parent::buildOptionsForm($form, $form_state);
+    $form['pager_placement'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Pager Placement'),
+      '#options' => $this->getPlacementOptions(),
+      '#default_value' => $this->options['pager_placement'],
+    ];
+  }
+
+  /**
+   * Options for placement of pager.
+   *
+   * @return array
+   */
+  protected function getPlacementOptions() {
+    return [
+      'top' => $this->t('Top'),
+      'bottom' => $this->t('Bottom'),
+      'both' => $this->t('Both'),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineOptions() {
+    $options = parent::defineOptions();
+
+    $options['pager_placement'] = array('default' => 'bottom');
+
+    return $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function summaryTitle() {
+    $placement = $this->getPlacementOptions()[$this->options['pager_placement']];
+    return $this->t('Placement: @placement', ['@placement' => $placement]);
+  }
+
+
+}

@@ -8,7 +8,7 @@
 use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Routing\RouteMatchInterface;
-
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 define('CALENDAR_SHOW_ALL', 0);
 define('CALENDAR_HIDE_ALL', -1);
 define('CALENDAR_EMPTY_STRIPE', '#ffffff');
@@ -25,6 +25,8 @@ function calendar_page_attachments(array &$page) {
  *
  * Adjust the default date for a view based on the stored session value. This is
  * used for current date tracking.
+ *
+ * @todo Is this still necessary?
  */
 function calendar_date_default_argument_alter(&$argument, &$value) {
   $user = \Drupal::currentUser();
@@ -49,11 +51,22 @@ function calendar_date_default_argument_alter(&$argument, &$value) {
 
 /**
  * Implements hook_views_pre_render().
- *
- * Track the current date as the user moves from calendar display to calendar
- * display.
  */
 function calendar_views_pre_render(ViewExecutable $view) {
+  _calendar_views_track_current_date($view);
+}
+
+
+
+/**
+ * Track the current date as the user moves from calendar display to calendar
+ * display.
+ *
+ * @param \Drupal\views\ViewExecutable $view
+ *
+ * @return \Drupal\views\Plugin\views\argument\ArgumentPluginBase
+ */
+function _calendar_views_track_current_date(ViewExecutable $view) {
   $user = \Drupal::currentUser();
 
   $tracking = \Drupal::config('calendar.settings')->get('calendar_track_date');
@@ -147,6 +160,13 @@ function calendar_theme() {
         'curday_date' => NULL
       ],
     ],
+    'calendar_pager' => [
+      'variables' => [
+        'parameters' => [],
+        'items' => [],
+      ],
+    ],
+
   ];
 }
 
