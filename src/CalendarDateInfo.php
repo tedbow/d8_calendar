@@ -22,7 +22,7 @@ class CalendarDateInfo {
   /**
    * The date argument.
    *
-   * @var \Drupal\calendar\Plugin\views\argument\CalendarDate $dateArgument
+   * @var \Drupal\calendar_datetime\Plugin\views\argument\Date $dateArgument
    *   The date argument.
    */
   protected $dateArgument;
@@ -140,7 +140,7 @@ class CalendarDateInfo {
   /**
    * Getter for the date argument.
    *
-   * @return \Drupal\calendar\Plugin\views\argument\CalendarDate
+   * @return \Drupal\calendar_datetime\Plugin\views\argument\Date
    *   The date argument.
    */
   public function getDateArgument() {
@@ -150,7 +150,7 @@ class CalendarDateInfo {
   /**
    * Setter for the date argument.
    *
-   * @param \Drupal\calendar\Plugin\views\argument\CalendarDate $dateArgument
+   * @param \Drupal\calendar_datetime\Plugin\views\argument\Date $dateArgument
    *   The date argument.
    */
   public function setDateArgument($dateArgument) {

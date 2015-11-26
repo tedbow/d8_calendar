@@ -47,6 +47,7 @@
     </tr>
   </thead>
   <tbody>
+    {# // All day and multi-day events not support in core DateTime module in Drupal 8
     <tr>
       <td class="{{ agenda_hour_class }}">
          <span class="calendar-hour">
@@ -69,6 +70,7 @@
        </td>
       {% endfor %}
     </tr>
+    #}
     {% for hour in rows['items'] %}
     <tr>
       <td class="calendar-agenda-hour">

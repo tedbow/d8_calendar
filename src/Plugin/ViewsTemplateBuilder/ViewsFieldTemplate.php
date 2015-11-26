@@ -10,6 +10,7 @@ namespace Drupal\calendar\Plugin\ViewsTemplateBuilder;
 
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views_templates\Plugin\ViewsDuplicateBuilderBase;
 use Drupal\views_templates\ViewsTemplateLoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,6 +53,20 @@ class ViewsFieldTemplate extends ViewsDuplicateBuilderBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function getReplacements($options = NULL) {
+    $replacements = parent::getReplacements($options);
+    if (isset($options['base_path'])) {
+      $replacements['__BASE_PATH'] = $options['base_path'];
+    }
+    return $replacements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function alterViewTemplateAfterCreation(array &$view_template, $options = NULL) {
     parent::alterViewTemplateAfterCreation($view_template, $options);
     $field_defs = $this->field_manager->getBaseFieldDefinitions($this->getDefinitionValue('entity_type'));
@@ -61,6 +76,22 @@ class ViewsFieldTemplate extends ViewsDuplicateBuilderBase {
     }
     $this->field_manager->getFieldDefinitions($this->getDefinitionValue('entity_type'), 'event');
     $this->field_manager->getFieldStorageDefinitions('node');
+  }
+
+  public function buildConfigurationForm($form, FormStateInterface $form_state) {
+    $config_form = parent::buildConfigurationForm($form, $form_state);
+    $replacements = $this->getDefinitionValue('replacements');
+    if (isset($replacements['base_path'])) {
+      $config_form['base_path'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Base View Path'),
+        '#description' => $this->t('@todo add description'),
+        '#default_value' => $replacements['base_path'],
+        '#required' => TRUE,
+        // @todo add Validation for path element. From Views?
+      ];
+    }
+    return $config_form;
   }
 
 

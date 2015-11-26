@@ -30,6 +30,7 @@
  */
 #}
 <div class="calendar-calendar"><div class="day-view">
+{# // Multi-day and all day events are not supported because Dates don't have end values
 <div id="multi-day-container">
   <table class="full">
     <tbody>
@@ -58,7 +59,9 @@
     </tbody>
   </table>
 </div>
+
 <div class="header-body-divider">&nbsp;</div>
+#}
 <div id="single-day-container">
   <table class="full">
     <tbody>
