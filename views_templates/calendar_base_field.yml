@@ -338,23 +338,22 @@ display:
         context: '0'
         menu_name: main
       arguments:
-        __FIELD_ID_calendar:
-          id: __FIELD_ID_calendar
+        __FIELD_ID_year_week:
+          id: __FIELD_ID_year_week
           table: __BASE_TABLE
-          field: __FIELD_ID_calendar
+          field: __FIELD_ID_year_week
           relationship: none
           group_type: group
           admin_label: ''
-          default_action: ignore
+          default_action: default
           exception:
             value: all
             title_enable: false
             title: All
           title_enable: false
           title: ''
-          default_argument_type: fixed
-          default_argument_options:
-            argument: ''
+          default_argument_type: date
+          default_argument_options: {  }
           default_argument_skip_url: false
           summary_options:
             base_path: ''
@@ -371,7 +370,7 @@ display:
             fail: 'not found'
           validate_options: {  }
           entity_type: __ENTITY_TYPE
-          plugin_id: calendar_datetime
+          plugin_id: date_year_week
     cache_metadata:
       max-age: -1
       contexts:

@@ -8,14 +8,14 @@
 namespace Drupal\calendar\Plugin\views\argument;
 
 
-use Drupal\calendar_datetime\Plugin\views\argument\Date;
+use Drupal\views\Plugin\views\argument\Date as NumericDate;
 
 /**
  * Argument handler for a day.
  *
- * @ViewsArgument("datetime_year_week")
+ * @ViewsArgument("date_year_week")
  */
-class YearWeekDate extends Date{
+class TimeStampYearWeekDate extends NumericDate{
 
   /**
    * {@inheritdoc}
