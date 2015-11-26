@@ -10,6 +10,7 @@ use DateTimeZone;
 use Drupal\Core\Datetime\DateHelper;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Drupal\views\Plugin\views\filter\Broken;
+use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use Drupal\Component\Utility\Unicode;
 use Drupal\views\Plugin\views\argument\Date as ViewsDateArg;
@@ -690,5 +691,31 @@ class CalendarHelper extends DateHelper {
    */
   public static function isCalendarArgument(ArgumentPluginBase $arg) {
     return $arg instanceof ViewsDateArg;
+  }
+
+  /**
+   * Helper function to find the first date argument handler for this view.
+   *
+   * This function also sets the date argument position into the $dateInfo
+   * object.
+   *
+   * @return DateArgumentWrapper|FALSE
+   *   Returns the Date handler if one is found, or FALSE otherwise.
+   */
+  public static function getDateArgumentHandler(ViewExecutable $view) {
+    $current_position = 0;
+    /**
+     * @var  $name
+     * @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $handler
+     */
+    foreach ($view->argument as $name => $handler) {
+      if (static::isCalendarArgument($handler)) {
+        $wrapper = new DateArgumentWrapper($handler);
+        $wrapper->setPosition($current_position);
+        return $wrapper;
+      }
+      $current_position++;
+    }
+    return FALSE;
   }
 }

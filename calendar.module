@@ -151,7 +151,8 @@ function calendar_theme() {
     ],
     'calendar_pager' => [
       'variables' => [
-        'myvalue' => 'default value',
+        'parameters' => [],
+        'items' => [],
       ],
     ],
 
