@@ -26,6 +26,7 @@ use Drupal\views\Plugin\views\pager\PagerPluginBase;
 class CalendarPager extends PagerPluginBase {
   public function render($input) {
     return array(
+      //'#theme' => $this->themeFunctions(), // comment out for testing
       '#theme' => 'calendar_pager',
       '#myvalue' => 'override value',
     );
