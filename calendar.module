@@ -25,6 +25,8 @@ function calendar_page_attachments(array &$page) {
  *
  * Adjust the default date for a view based on the stored session value. This is
  * used for current date tracking.
+ *
+ * @todo Is this still necessary?
  */
 function calendar_date_default_argument_alter(&$argument, &$value) {
   $user = \Drupal::currentUser();
@@ -147,6 +149,12 @@ function calendar_theme() {
         'curday_date' => NULL
       ],
     ],
+    'calendar_pager' => [
+      'variables' => [
+        'myvalue' => 'default value',
+      ],
+    ],
+
   ];
 }
 
