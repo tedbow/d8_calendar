@@ -60,11 +60,24 @@ class DateArgumentWrapper {
     if (stripos($class, 'YearDate') !== FALSE) {
       return 'Y';
     }
+    if (stripos($class, 'YearWeekDate') !== FALSE) {
+      return 'YW';
+    }
   }
 
   public function createDateTime() {
     if ($value = $this->dateArg->getValue()) {
-      return \DateTime::createFromFormat($this->getArgFormat(), $value);
+      $format = $this->getArgFormat();
+      if ($format == 'YW') {
+        $date = new \DateTime();
+        $year = (int)substr($value, 0, 4);
+        $month = (int)substr($value, 4, 2);
+        $date->setISODate($year, $month);
+        return $date;
+      }
+      else {
+        return \DateTime::createFromFormat($this->getArgFormat(), $value);
+      }
     }
     return NULL;
   }
@@ -92,9 +105,9 @@ class DateArgumentWrapper {
       case 'year':
         return 'year';
         break;
-      // @todo Handle week
-      default:
-        return 'month';
+      case 'year_week';
+        return 'week';
+        break;
     }
   }
 

@@ -30,6 +30,7 @@ function calendar_datetime_field_views_data_alter(array &$data, FieldStorageConf
         'year' => t('Calendar Date in the form of YYYY.'),
         'year_month' => t('Calendar Date in the form of YYYYMM.'),
         'full_date' => t('Calendar Date in the form of CCYYMMDD.'),
+        'year_week' => t('Calendar Date in the form of CCYYW.'),
       ];
       foreach ($arguments as $argument_type => $help_text) {
         $data[$table_name][$field_storage->getName() . '_value_' . $argument_type] = [
