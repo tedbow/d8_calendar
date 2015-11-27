@@ -153,6 +153,17 @@ function calendar_theme() {
       'variables' => ['view' => NULL, 'rows' => [], 'options' => [], 'months' => [], 'mini' => FALSE,],
       'file' => 'calendar.theme.inc',
     ],
+    'calendar_header' => [
+      'variables' =>
+        [
+          'view' => NULL,
+          'options' => [],
+          'title' => '',
+          'empty' => FALSE,
+          'granularity' => NULL,
+        ],
+      'file' => 'calendar.theme.inc',
+    ],
     'calendar_time_row_heading' => [
       'variables' => [
         'start_time' => NULL,
