@@ -25,7 +25,7 @@ the caches manually or using custom code if the content of the calendar
 changes before the cache lifetime expires. 
 
 The recommended settings for time-based caching are:
-
+// @todo Update for 8.x Views cache settings
 - Query results
 Cache the query only when not using ajax. Do not cache the query
 on any display that uses ajax for its results.
