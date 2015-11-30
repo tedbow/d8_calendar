@@ -902,28 +902,4 @@ function _calc_indent( $cur_depth, $depth ) {
   return round(10 * $cur_depth / ($depth + 1));
 }
 
-/**
- * Implements hook_preprocess_views_view().
- *
- * Move pager according to options.
- *
- * // @todo This works after 'drush cr' but then every other loading of the view doesn't work.
- */
-function calendar_preprocess_views_view(&$variables) {
-  /** @var \Drupal\views\ViewExecutable $view */
-  $view = $variables['view'];
-  /** @var \Drupal\views\Plugin\views\pager\PagerPluginBase $pager */
-  $pager = $view->getPager();
-  if ($pager instanceof \Drupal\calendar\Plugin\views\pager\CalendarPager) {
-    switch($pager->options['pager_placement']) {
-      case 'top':
-        $variables['attachment_before']['pager'] = $variables['pager'];
-        $variables['pager'] = [];
-        break;
-      case 'both':
-        $variables['attachment_before']['pager'] = $variables['pager'];
-        break;
-    }
-  }
-}
 /** @} End of addtogroup themeable */

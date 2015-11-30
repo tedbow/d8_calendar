@@ -58,6 +58,7 @@ class CalendarPager extends PagerPluginBase {
     return array(
       '#theme' => $this->themeFunctions(),
       '#items' => $items,
+      '#exclude' => $this->options['exclude_display'],
     );
   }
 
@@ -108,24 +109,11 @@ class CalendarPager extends PagerPluginBase {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
-    $form['pager_placement'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Pager Placement'),
-      '#options' => $this->getPlacementOptions(),
-      '#default_value' => $this->options['pager_placement'],
-    ];
-  }
-
-  /**
-   * Options for placement of pager.
-   *
-   * @return array
-   */
-  protected function getPlacementOptions() {
-    return [
-      'top' => $this->t('Top'),
-      'bottom' => $this->t('Bottom'),
-      'both' => $this->t('Both'),
+    $form['exclude_display'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Exclude from Display'),
+      '#default_value' => $this->options['exclude_display'],
+      '#description' => $this->t('Use this option if you only want to display the pager in Calendar Header area.'),
     ];
   }
 
@@ -134,19 +122,9 @@ class CalendarPager extends PagerPluginBase {
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-
-    $options['pager_placement'] = array('default' => 'bottom');
+    $options['exclude_display'] = array('default' => FALSE);
 
     return $options;
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function summaryTitle() {
-    $placement = $this->getPlacementOptions()[$this->options['pager_placement']];
-    return $this->t('Placement: @placement', ['@placement' => $placement]);
-  }
-
 
 }
