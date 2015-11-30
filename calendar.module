@@ -175,6 +175,7 @@ function calendar_theme() {
       'variables' => [
         'parameters' => [],
         'items' => [],
+        'exclude' => FALSE,
       ],
     ],
 

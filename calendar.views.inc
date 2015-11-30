@@ -20,7 +20,7 @@ function calendar_views_data_alter(array &$data) {
   }
   $data['views']['calendar_header'] = array(
     'title' => t('Calendar Header'),
-    'help' => t('Calendar heading.'),
+    'help' => t('Calendar heading or pager.'),
     'area' => array(
       'id' => 'calendar_header',
     ),

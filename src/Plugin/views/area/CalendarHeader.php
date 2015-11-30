@@ -30,6 +30,7 @@ class CalendarHeader extends TokenizeAreaPluginBase {
     $options['empty']['default'] = TRUE;
     // Provide our own default.
     $options['heading'] = array('default' => '');
+    $options['pager_embed'] = array('default' => FALSE);
     return $options;
   }
 
@@ -44,6 +45,11 @@ class CalendarHeader extends TokenizeAreaPluginBase {
       '#type' => 'textfield',
       '#default_value' => $this->options['heading'],
     );
+    $form['pager_embed'] = array(
+      '#title' => $this->t('Use Pager'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->options['pager_embed'],
+    );
   }
 
   /**
@@ -54,12 +60,29 @@ class CalendarHeader extends TokenizeAreaPluginBase {
 
       $argument = CalendarHelper::getDateArgumentHandler($this->view);
 
-      return array(
-        '#theme' => 'calendar_header',
-        '#title' => $this->renderTextField($this->options['heading']),
-        '#empty' => $empty,
-        '#granularity' => $argument->getGranularity(),
-      );
+      $header_text = $this->renderTextField($this->options['heading']);
+      if (!$this->options['pager_embed']) {
+        $render = array(
+          '#theme' => 'calendar_header',
+          '#title' => $header_text,
+          '#empty' => $empty,
+          '#granularity' => $argument->getGranularity(),
+        );
+      }
+      else {
+        if ($this->view->display_handler->renderPager()) {
+          $exposed_input = isset($this->view->exposed_raw_input) ? $this->view->exposed_raw_input : NULL;
+          $render = $this->view->renderPager($exposed_input);
+          $render['#exclude'] = FALSE;
+        }
+
+        $render['#items']['current'] = $this->renderTextField($this->options['heading']);
+      }
+
+
+
+      return $render;
+
     }
 
     return array();
