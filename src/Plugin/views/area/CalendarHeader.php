@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\area\TokenizeAreaPluginBase;
 
 /**
- * Views area text handler.
+ * Views area Calendar Header area.
  *
  * @ingroup views_area_handlers
  *
@@ -50,6 +50,7 @@ class CalendarHeader extends TokenizeAreaPluginBase {
       '#type' => 'checkbox',
       '#default_value' => $this->options['pager_embed'],
     );
+
   }
 
   /**
@@ -60,6 +61,7 @@ class CalendarHeader extends TokenizeAreaPluginBase {
 
       $argument = CalendarHelper::getDateArgumentHandler($this->view);
 
+      $render = [];
       $header_text = $this->renderTextField($this->options['heading']);
       if (!$this->options['pager_embed']) {
         $render = array(
@@ -73,10 +75,10 @@ class CalendarHeader extends TokenizeAreaPluginBase {
         if ($this->view->display_handler->renderPager()) {
           $exposed_input = isset($this->view->exposed_raw_input) ? $this->view->exposed_raw_input : NULL;
           $render = $this->view->renderPager($exposed_input);
+          // Override the exclude option of the pager.
           $render['#exclude'] = FALSE;
+          $render['#items']['current'] = $this->renderTextField($this->options['heading']);
         }
-
-        $render['#items']['current'] = $this->renderTextField($this->options['heading']);
       }
 
 

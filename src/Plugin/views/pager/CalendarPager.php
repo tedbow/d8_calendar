@@ -113,6 +113,7 @@ class CalendarPager extends PagerPluginBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Exclude from Display'),
       '#default_value' => $this->options['exclude_display'],
+      '#description' => $this->t('Use this option if you only want to display the pager in Calendar Header area.'),
     ];
   }
 
@@ -125,7 +126,5 @@ class CalendarPager extends PagerPluginBase {
 
     return $options;
   }
-
-
 
 }
