@@ -67,15 +67,15 @@ class CalendarValidator extends ArgumentValidatorPluginBase {
 
     switch ($this->argument_wrapper->getGranularity()) {
       case 'month':
-        return 'm Y';
+        return 'F Y';
       case 'year':
         return 'Y';
       case 'week':
-        return 'M j, Y';
+        return 'F j, Y';
       case 'day':
       default:
         // @todo Load format used for medium here
-        return 'M j, Y';
+        return 'F j, Y';
     }
   }
 
